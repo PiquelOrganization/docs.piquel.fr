@@ -1,2 +1,3 @@
 # docs.piquel.fr
-Documentation for all things piquel
+
+What I use to serve documentation. Basically a webserver that serves Markdown as HTML.
