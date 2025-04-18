@@ -6,6 +6,7 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/gorilla/mux"
 )
 
 type Files []File
@@ -13,6 +14,23 @@ type Files []File
 type File struct {
 	Path string
 	Data []byte
+}
+
+func SetupRouterFromLoadedFiles(router *mux.Router, files Files) {
+	for _, file := range files {
+		handler := GenerateHandler(file.Data)
+		router.HandleFunc(file.Path, handler).Methods(http.MethodGet)
+	}
+}
+
+func TranslateFiles(markdownFiles Files) Files {
+	htmlFiles := []File{}
+	for _, file := range markdownFiles {
+		html := MarkdownToHTML(file.Data)
+		htmlFile := File{Path: file.Path, Data: html}
+		htmlFiles = append(htmlFiles, htmlFile)
+	}
+	return htmlFiles
 }
 
 func MarkdownToHTML(md []byte) []byte {

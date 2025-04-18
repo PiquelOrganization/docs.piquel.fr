@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
+	"github.com/PiquelOrganization/docs.piquel.fr/source"
 	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 	"github.com/gorilla/mux"
 )
@@ -15,21 +16,13 @@ func main() {
 
 	config := config.LoadConfig()
 	router := mux.NewRouter()
+    source := source.GetSource(config)
 
-	// TODO: actually populate the var
-	markdownFiles := utils.Files{}
+    markdownFiles := source.LoadFiles()
+    htmlFiles := utils.TranslateFiles(markdownFiles)
+    utils.SetupRouterFromLoadedFiles(router, htmlFiles)
 
-	htmlFiles := utils.Files{}
-	for _, file := range markdownFiles {
-		html := utils.MarkdownToHTML(file.Data)
-		htmlFile := utils.File{Path: file.Path, Data: html}
-		htmlFiles = append(htmlFiles, htmlFile)
-	}
-
-	for _, file := range htmlFiles {
-		handler := utils.GenerateHandler(file.Data)
-		router.HandleFunc(file.Path, handler).Methods(http.MethodGet)
-	}
+    // TODO: admin routes that restart the entire webserver
 
 	address := fmt.Sprintf("0.0.0.0:%s", config.Port)
 
