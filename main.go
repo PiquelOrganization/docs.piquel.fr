@@ -1,34 +1,28 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/PiquelOrganization/docs.piquel.fr/config"
+	"github.com/PiquelOrganization/docs.piquel.fr/server"
 	"github.com/gorilla/mux"
 )
 
 func main() {
     log.Printf("Initializing documentation service...\n")
 
-    // TODO: load config (env)
-    // TODO: load documentation
+    // config
+    config := config.LoadConfig()
 
+    // router
+    log.Printf("[Router] Initializing...\n")
     router := mux.NewRouter()
-
-    // TODO: middleware (logging, ...)
-
+    router.HandleFunc("/", testHandler).Methods(http.MethodGet)
     log.Printf("[Router] Initialized\n")
 
-    router.HandleFunc("/", testHandler).Methods(http.MethodGet)
-
-    address := fmt.Sprintf("0.0.0.0:8080")
-
-    log.Printf("[Router] Starting router...\n")
-    log.Printf("[Router] Listening on %s!\n", address)
-
-    err := http.ListenAndServe(address, router)
-    panic(err)
+    server := server.InitServer(router, config)
+    server.Serve()
 }
 
 func testHandler(w http.ResponseWriter, r *http.Request) {
