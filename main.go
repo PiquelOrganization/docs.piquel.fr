@@ -1,15 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
+	"github.com/PiquelOrganization/docs.piquel.fr/server"
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
 	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 	"github.com/gorilla/mux"
 )
+
+var DocsServer server.Server
 
 func main() {
 	log.Printf("Initializing documentation service...\n")
@@ -25,14 +27,15 @@ func main() {
 
 	// TODO: admin routes that restart the entire webserver
 
-	address := fmt.Sprintf("0.0.0.0:%s", config.Port)
+	DocsServer := server.NewServer(config, router)
 
-	log.Printf("[Server] Starting server on %s!\n", address)
+	done := make(chan error)
+	go DocsServer.Serve(done)
 
-	server := http.Server{
-		Addr:    address,
-		Handler: router,
+	err := <-done
+	if err != http.ErrServerClosed {
+		panic(err)
 	}
 
-    err := server.ListenAndServe()
+	log.Printf("[Server] Shut down without issue")
 }
