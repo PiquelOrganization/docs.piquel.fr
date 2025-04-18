@@ -10,13 +10,13 @@ import (
 func LoadConfig() *Config {
 	godotenv.Load()
 
-    log.Printf("[Config] Loading environment variables...")
+	log.Printf("[Config] Loading environment variables...")
 
 	return &Config{
 		Domain: getEnv("DOMAIN"),
 		Host:   getEnv("HOST"),
 		Port:   getDefaultEnv("PORT", "80"),
-    }
+	}
 }
 
 func getEnv(key string) string {

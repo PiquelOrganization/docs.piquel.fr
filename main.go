@@ -1,30 +1,38 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
-	"github.com/PiquelOrganization/docs.piquel.fr/server"
+	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 	"github.com/gorilla/mux"
 )
 
 func main() {
-    log.Printf("Initializing documentation service...\n")
+	log.Printf("Initializing documentation service...\n")
 
-    // config
-    config := config.LoadConfig()
+	config := config.LoadConfig()
+	router := mux.NewRouter()
 
-    // router
-    log.Printf("[Router] Initializing...\n")
-    router := mux.NewRouter()
-    router.HandleFunc("/", testHandler).Methods(http.MethodGet)
-    log.Printf("[Router] Initialized\n")
+	// TODO: actually populate the var
+	markdownFiles := utils.Files{}
 
-    server := server.InitServer(router, config)
-    server.Serve()
-}
+	htmlFiles := utils.Files{}
+	for _, file := range markdownFiles {
+		html := utils.MarkdownToHTML(file.Data)
+		htmlFile := utils.File{Path: file.Path, Data: html}
+		htmlFiles = append(htmlFiles, htmlFile)
+	}
 
-func testHandler(w http.ResponseWriter, r *http.Request) {
-    w.Write([]byte("Hello, World!"))
+	for _, file := range htmlFiles {
+		handler := utils.GenerateHandler(file.Data)
+		router.HandleFunc(file.Path, handler).Methods(http.MethodGet)
+	}
+
+	address := fmt.Sprintf("0.0.0.0:%s", config.Port)
+
+	log.Printf("[Server] Starting server on %s!\n", address)
+	log.Fatalf("%s\n", http.ListenAndServe(address, router))
 }
