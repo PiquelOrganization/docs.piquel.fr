@@ -6,10 +6,12 @@ import (
 )
 
 type Source interface {
-    GetSourceType() string
-    LoadFiles() utils.Files
+	GetSourceType() string
+	LoadFiles() utils.Files
 }
 
 func GetSource(config *config.Config) Source {
-    return nil
+	path := "/home/piquel/Projects/OpenMC/Wiki"
+
+	return NewFileSystemSource(path)
 }

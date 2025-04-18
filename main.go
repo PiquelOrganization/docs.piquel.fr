@@ -16,16 +16,23 @@ func main() {
 
 	config := config.LoadConfig()
 	router := mux.NewRouter()
-    source := source.GetSource(config)
+	source := source.GetSource(config)
 
-    markdownFiles := source.LoadFiles()
-    htmlFiles := utils.TranslateFiles(markdownFiles)
-    utils.SetupRouterFromLoadedFiles(router, htmlFiles)
+	markdownFiles := source.LoadFiles()
 
-    // TODO: admin routes that restart the entire webserver
+	htmlFiles := utils.TranslateFiles(markdownFiles)
+	utils.SetupRouterFromLoadedFiles(router, htmlFiles)
+
+	// TODO: admin routes that restart the entire webserver
 
 	address := fmt.Sprintf("0.0.0.0:%s", config.Port)
 
 	log.Printf("[Server] Starting server on %s!\n", address)
-	log.Fatalf("%s\n", http.ListenAndServe(address, router))
+
+	server := http.Server{
+		Addr:    address,
+		Handler: router,
+	}
+
+    err := server.ListenAndServe()
 }
