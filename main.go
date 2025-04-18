@@ -18,16 +18,18 @@ func main() {
 
 	config := config.LoadConfig()
 
-    runDocsService(config)
+	runDocsService(config)
 }
 
 func runDocsService(config *config.Config) {
 	log.Printf("Starting documentation service...\n")
 	router := mux.NewRouter()
-	source := source.GetSource(config)
 
-	markdownFiles := source.LoadFiles()
+	if config.UseGit {
+		// TODO: clone/pull repo
+	}
 
+	markdownFiles := source.LoadFiles(config)
 	htmlFiles := utils.TranslateFiles(markdownFiles)
 	utils.SetupRouterFromLoadedFiles(router, htmlFiles)
 
@@ -46,7 +48,7 @@ func runDocsService(config *config.Config) {
 	log.Printf("[Server] Shut down without issue\n")
 	log.Printf("Stopped documentation service\n")
 
-    if DocsServer.IsRequestingRestart() {
-        runDocsService(config)
-    }
+	if DocsServer.IsRequestingRestart() {
+		runDocsService(config)
+	}
 }
