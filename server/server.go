@@ -12,6 +12,7 @@ import (
 type Server struct {
 	http.Server
 	config *config.Config
+    requestingRestart bool
 }
 
 func NewServer(config *config.Config, handler http.Handler) Server {
@@ -31,6 +32,16 @@ func (s *Server) Serve(done chan error) {
 
 	err := s.ListenAndServe()
 	done <- err
+}
+
+func (s *Server) IsRequestingRestart() bool {
+    return s.requestingRestart
+}
+
+func (s *Server) Restart() {
+	log.Printf("[Server] Restart request received...")
+    s.requestingRestart = true
+	s.Shutdown(context.Background())
 }
 
 func (s *Server) Shutdown(context context.Context) {

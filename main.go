@@ -17,6 +17,12 @@ func main() {
 	log.Printf("Initializing documentation service...\n")
 
 	config := config.LoadConfig()
+
+    runDocsService(config)
+}
+
+func runDocsService(config *config.Config) {
+	log.Printf("Starting documentation service...\n")
 	router := mux.NewRouter()
 	source := source.GetSource(config)
 
@@ -37,5 +43,10 @@ func main() {
 		panic(err)
 	}
 
-	log.Printf("[Server] Shut down without issue")
+	log.Printf("[Server] Shut down without issue\n")
+	log.Printf("Stopped documentation service\n")
+
+    if DocsServer.IsRequestingRestart() {
+        runDocsService(config)
+    }
 }
