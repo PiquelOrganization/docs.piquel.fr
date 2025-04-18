@@ -1,0 +1,27 @@
+# Go files
+go.sum
+
+# Compiled binaries
+*.exe
+bin/
+
+# Dockerfiles
+Dockerfile
+.dockerignore
+docker-stack.yml
+
+# Git files
+.gitignore
+.gitattributes
+.git/
+.github/
+
+# Other config and files
+.air.toml
+Makefile
+README.md
+LICENSE
+
+# Environment
+.env
+.env.*
