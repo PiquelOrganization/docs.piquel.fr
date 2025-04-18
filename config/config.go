@@ -12,10 +12,21 @@ func LoadConfig() *Config {
 
 	log.Printf("[Config] Loading environment variables...")
 
+	useGitString := getDefaultEnv("USE_GIT", "false")
+	useGit := useGitString == "true"
+    repository := ""
+    
+    if useGit {
+        repository = getEnv("REPOSITORY")
+    }
+
 	return &Config{
-		Domain: getEnv("DOMAIN"),
-		Host:   getEnv("HOST"),
-		Port:   getDefaultEnv("PORT", "80"),
+		Domain:   getEnv("DOMAIN"),
+		Host:     getEnv("HOST"),
+		Port:     getDefaultEnv("PORT", "80"),
+		DataPath: getDefaultEnv("DATA_PATH", "/docs/data"),
+		UseGit:   useGit,
+        Repository: repository,
 	}
 }
 
