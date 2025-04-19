@@ -11,7 +11,7 @@ func Clone(url, path string) error {
 }
 
 // BE CAREFUL WHERE YOU USE THIS, INPUTS ARE NOT SANITIZED
-func RepoAtPath(path string) error {
+func Status(path string) error {
 	err := exec.Command("cd", path).Run()
 	if err != nil {
 		return err

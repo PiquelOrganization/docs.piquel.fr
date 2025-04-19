@@ -26,11 +26,17 @@ func runDocsService(config *config.Config) {
 	log.Printf("Starting documentation service...\n")
 
 	if config.UseGit {
-		if git.RepoAtPath(config.DataPath) {
-            git.Pull(config.DataPath)
-        } else {
-            git.Clone(config.Repository, config.DataPath)
-        }
+        if err := git.Status(config.DataPath); err == nil {
+			err = git.Pull(config.DataPath)
+            if err != nil {
+                panic(err)
+            }
+		} else {
+            err := git.Clone(config.Repository, config.DataPath)
+            if err != nil {
+                panic(err)
+            }
+		}
 	}
 
 	router := mux.NewRouter()
