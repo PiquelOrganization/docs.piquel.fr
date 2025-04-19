@@ -4,5 +4,5 @@ What I use to serve documentation. Basically a webserver that serves Markdown as
 
 ## TODO
 
-- Setup GitHub Webhook to track when repo is updated
+- Verify Github signature in webhook
 - Render the documentation based on requirements
