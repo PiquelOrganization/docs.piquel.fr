@@ -4,6 +4,5 @@ What I use to serve documentation. Basically a webserver that serves Markdown as
 
 ## TODO
 
-- Manage the git repo if using git
 - Implement git wrapper
 - Render the documentation based on requirements

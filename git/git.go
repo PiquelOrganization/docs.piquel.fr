@@ -2,14 +2,14 @@ package git
 
 // TODO: implement git wrapper
 
-func Clone(url, path string) error {
-	return nil
+func Clone(url, path string) {
+	return
 }
 
-func RepoAtPath(path string) error {
-	return nil
+func RepoAtPath(path string) bool {
+	return false
 }
 
-func Pull(path string) error {
-	return nil
+func Pull(path string) {
+	return
 }

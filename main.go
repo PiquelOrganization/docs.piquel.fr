@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
+	"github.com/PiquelOrganization/docs.piquel.fr/git"
 	"github.com/PiquelOrganization/docs.piquel.fr/render"
 	"github.com/PiquelOrganization/docs.piquel.fr/server"
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
@@ -25,7 +26,11 @@ func runDocsService(config *config.Config) {
 	log.Printf("Starting documentation service...\n")
 
 	if config.UseGit {
-		// TODO: clone/pull repo
+		if git.RepoAtPath(config.DataPath) {
+            git.Pull(config.DataPath)
+        } else {
+            git.Clone(config.Repository, config.DataPath)
+        }
 	}
 
 	router := mux.NewRouter()
