@@ -18,6 +18,6 @@ func VerifySignature(payload, header, secret string) (bool, error) {
 
 	expectedSignature := h.Sum(nil)
 
-    log.Printf("Signature verification request -> incoming signatre: %s, expectedSignature: %s", string(signature), string(expectedSignature))
+    log.Printf("Signature verification request -> incoming signatre: %s, expectedSignature: %s", hex.EncodeToString(signature), hex.EncodeToString(expectedSignature))
 	return hmac.Equal(signature, expectedSignature), nil
 }
