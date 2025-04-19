@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 )
 
@@ -13,11 +12,4 @@ func (s *Server) GithubPushHandler(w http.ResponseWriter, r *http.Request) {
     if err != nil {
         panic(err)
     }
-
-    json, err := json.Marshal(payload)
-    if err != nil {
-        panic(err)
-    }
-
-    log.Printf("Received:\n %s", json)
 }

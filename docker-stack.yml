@@ -12,6 +12,8 @@ services:
       HOST: ${HOST}
       USE_GIT: "true"
       REPOSITORY: ${REPOSITORY}
+      USE_WEBHOOK: "true"
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET}
     volumes:
       - docs-cache:/docs/data
     deploy:

@@ -48,6 +48,7 @@ jobs:
           echo "DOMAIN=${{ vars.DOMAIN }}" >> ./.env
           echo "HOST=${{ vars.HOST }}" >> ./.env
           echo "REPOSITORY=${{ vars.REPOSITORY }}" >> ./.env
+          echo "WEBHOOK_SECRET=${{ secrets.WEBHOOK_SECRET }}" >> ./.env
 
           echo "GIT_COMMIT_HASH=${{ github.sha }}" >> ./.env
 
