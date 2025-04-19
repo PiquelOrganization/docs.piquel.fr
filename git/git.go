@@ -15,22 +15,18 @@ func Clone(url, path string) error {
 
 // BE CAREFUL WHERE YOU USE THIS, INPUTS ARE NOT SANITIZED
 func Status(path string) error {
-	err := exec.Command("cd", path).Run()
-	if err != nil {
-		return err
-	}
+    cmd := exec.Command("git", "status")
+    cmd.Dir = path
 
-	log.Printf("[Git] Getting git status in %s", path)
-	return exec.Command("git", "status").Run()
+	log.Printf("[Git] Getting status of repository in %s", path)
+	return cmd.Run()
 }
 
 // BE CAREFUL WHERE YOU USE THIS, INPUTS ARE NOT SANITIZED
 func Pull(path string) error {
-	err := exec.Command("cd", path).Run()
-	if err != nil {
-		return err
-	}
+    cmd := exec.Command("git", "pull")
+    cmd.Dir = path
 
 	log.Printf("[Git] Pulling repository in %s", path)
-	return exec.Command("git", "pull").Run()
+	return cmd.Run()
 }
