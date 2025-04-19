@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"log"
 )
 
 func VerifySignature(payload, header, secret string) (bool, error) {
@@ -15,7 +16,8 @@ func VerifySignature(payload, header, secret string) (bool, error) {
 	h := hmac.New(sha256.New, []byte(secret))
 	h.Write([]byte(payload))
 
-	exeptectedSignature := h.Sum(nil)
+	expectedSignature := h.Sum(nil)
 
-	return hmac.Equal(signature, exeptectedSignature), nil
+    log.Printf("Signature verification request -> incoming signatre: %s, expectedSignature: %s", string(signature), string(expectedSignature))
+	return hmac.Equal(signature, expectedSignature), nil
 }
