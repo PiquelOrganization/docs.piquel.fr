@@ -10,19 +10,19 @@ import (
 )
 
 type Source interface {
-	LoadFiles() utils.File
+	LoadFiles() utils.Files
 }
 
 type RealSource struct {
 	config *config.Config
 }
 
-func NewRealSource(config *config.Config) *RealSource {
+func NewSource(config *config.Config) Source {
 	return &RealSource{config}
 }
 
-func (s *RealSource) LoadFiles(config *config.Config) utils.Files {
-	return s.getFilesFromDir(config.DataPath)
+func (s *RealSource) LoadFiles() utils.Files {
+	return s.getFilesFromDir(s.config.DataPath)
 }
 
 func (s *RealSource) getFilesFromDir(path string) utils.Files {

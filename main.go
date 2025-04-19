@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
+	"github.com/PiquelOrganization/docs.piquel.fr/render"
 	"github.com/PiquelOrganization/docs.piquel.fr/server"
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
-	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -23,17 +23,18 @@ func main() {
 
 func runDocsService(config *config.Config) {
 	log.Printf("Starting documentation service...\n")
-	router := mux.NewRouter()
 
 	if config.UseGit {
 		// TODO: clone/pull repo
 	}
 
-    source := source.NewRealSource(config)
+	router := mux.NewRouter()
+	source := source.NewSource(config)
+	renderer := render.NewRenderer(config, router, source)
 
-	markdownFiles := source.LoadFiles(config)
-	htmlFiles := utils.TranslateFiles(markdownFiles)
-	utils.SetupRouterFromLoadedFiles(router, htmlFiles)
+	renderer.RenderDocs()
+	renderer.RenderHTML()
+	renderer.SetupRouter()
 
 	// TODO: admin routes that restart the entire webserver
 
