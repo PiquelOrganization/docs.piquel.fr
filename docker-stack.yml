@@ -10,11 +10,18 @@ services:
     environment:
       DOMAIN: ${DOMAIN}
       HOST: ${HOST}
+      USE_GIT: true
+      REPOSITORY: ${REPOSITORY}
+    volumes:
+      - docs-cache:/docs/data
     deploy:
       update_config:
         order: start-first
     networks:
       - piquel-network
+
+volumes:
+  docs-cache:
 
 networks:
   piquel-network:
