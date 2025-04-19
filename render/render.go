@@ -10,6 +10,7 @@ import (
 )
 
 type Renderer interface {
+    Init()
 	RenderDocs()
 	RenderHTML()
 	SetupRouter()
@@ -27,8 +28,11 @@ type RealRenderer struct {
 	files utils.Files
 }
 
-func (r *RealRenderer) RenderDocs() {
+func (r *RealRenderer) Init() {
 	r.files = r.source.LoadFiles()
+}
+
+func (r *RealRenderer) RenderDocs() {
 	// TODO: render the documentation (namely include syntax, ...)
 }
 

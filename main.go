@@ -25,7 +25,12 @@ func main() {
 func runDocsService(config *config.Config) {
 	log.Printf("Starting documentation service...\n")
 
+	router := mux.NewRouter()
+	source := source.NewSource(config)
+	renderer := render.NewRenderer(config, router, source)
+
 	if config.UseGit {
+
 		if err := git.Status(config.DataPath); err == nil {
 			err = git.Pull(config.DataPath)
 			if err != nil {
@@ -39,10 +44,7 @@ func runDocsService(config *config.Config) {
 		}
 	}
 
-	router := mux.NewRouter()
-	source := source.NewSource(config)
-	renderer := render.NewRenderer(config, router, source)
-
+	renderer.Init()
 	renderer.RenderDocs()
 	renderer.RenderHTML()
 	renderer.SetupRouter()
