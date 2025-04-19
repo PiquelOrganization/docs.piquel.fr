@@ -36,8 +36,6 @@ func runDocsService(config *config.Config) {
 	renderer.RenderHTML()
 	renderer.SetupRouter()
 
-	// TODO: admin routes that restart the entire webserver
-
 	DocsServer := server.NewServer(config, router)
 
 	done := make(chan error)
