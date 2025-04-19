@@ -10,7 +10,7 @@ services:
     environment:
       DOMAIN: ${DOMAIN}
       HOST: ${HOST}
-      USE_GIT: true
+      USE_GIT: "true"
       REPOSITORY: ${REPOSITORY}
     volumes:
       - docs-cache:/docs/data
