@@ -28,8 +28,10 @@ func runDocsService(config *config.Config) {
 	router := mux.NewRouter()
 	source := source.NewSource(config)
 	renderer := render.NewRenderer(config, router, source)
+	DocsServer := server.NewServer(config, router)
 
 	if config.UseGit {
+		router.HandleFunc("/gh-webhook", DocsServer.GithubPushHandler).Methods(http.MethodPost)
 
 		if err := git.Status(config.DataPath); err == nil {
 			err = git.Pull(config.DataPath)
@@ -48,8 +50,6 @@ func runDocsService(config *config.Config) {
 	renderer.RenderDocs()
 	renderer.RenderHTML()
 	renderer.SetupRouter()
-
-	DocsServer := server.NewServer(config, router)
 
 	done := make(chan error)
 	go DocsServer.Serve(done)
