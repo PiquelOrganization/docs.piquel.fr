@@ -31,7 +31,7 @@ func runDocsService(config *config.Config) {
 	DocsServer := server.NewServer(config, router)
 
 	if config.UseGit {
-		router.HandleFunc("/gh-webhook", DocsServer.GithubPushHandler).Methods(http.MethodPost)
+		router.HandleFunc("/gh-push", DocsServer.GithubPushHandler).Methods(http.MethodPost)
 
 		if err := git.Status(config.DataPath); err == nil {
 			err = git.Pull(config.DataPath)

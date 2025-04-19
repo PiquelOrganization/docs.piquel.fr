@@ -7,10 +7,10 @@ import (
 
 func (s *Server) GithubPushHandler(w http.ResponseWriter, r *http.Request) {
     body := []byte{}
-    _, err := r.Body.Read(body)
+    size, err := r.Body.Read(body)
     if err != nil {
         panic(err)
     }
 
-    log.Printf("Received: %s", string(body[:]))
+    log.Printf("Received: %d bytes\n%s\n", size, string(body[:]))
 }
