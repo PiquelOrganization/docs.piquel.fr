@@ -1,16 +1,18 @@
 package server
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 )
 
 func (s *Server) GithubPushHandler(w http.ResponseWriter, r *http.Request) {
-    body := []byte{}
-    size, err := r.Body.Read(body)
+    decoder := json.NewDecoder(r.Body)
+    var test any
+    err := decoder.Decode(&test)
     if err != nil {
         panic(err)
     }
 
-    log.Printf("Received: %d bytes\n%s\n", size, string(body[:]))
+    log.Printf("Received:\n %v\n\nwith payload:\n%v", r, test)
 }
