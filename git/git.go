@@ -1,13 +1,16 @@
 package git
 
-import "os/exec"
+import (
+	"log"
+	"os/exec"
+)
 
 // WARNING: ONLY USE THESE WITH TRUSTED DATA
 
 // BE CAREFUL WHERE YOU USE THIS, INPUTS ARE NOT SANITIZED
 func Clone(url, path string) error {
-	cmd := exec.Command("git", "clone", url, path)
-	return cmd.Run()
+	log.Printf("[Git] Cloning %s into %s", url, path)
+	return exec.Command("git", "clone", url, path).Run()
 }
 
 // BE CAREFUL WHERE YOU USE THIS, INPUTS ARE NOT SANITIZED
@@ -17,6 +20,7 @@ func Status(path string) error {
 		return err
 	}
 
+	log.Printf("[Git] Getting git status in %s", path)
 	return exec.Command("git", "status").Run()
 }
 
@@ -27,5 +31,6 @@ func Pull(path string) error {
 		return err
 	}
 
+	log.Printf("[Git] Pulling repository in %s", path)
 	return exec.Command("git", "pull").Run()
 }
