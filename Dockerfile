@@ -18,7 +18,7 @@ RUN go mod tidy
 RUN CGO_ENABLED=0 go build -o ./bin/main ./main.go
 
 # Now for run env
-FROM alpine:latest
+FROM alpine/git:latest
 
 WORKDIR /docs.piquel.fr
 
