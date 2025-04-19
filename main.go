@@ -26,16 +26,16 @@ func runDocsService(config *config.Config) {
 	log.Printf("Starting documentation service...\n")
 
 	if config.UseGit {
-        if err := git.Status(config.DataPath); err == nil {
+		if err := git.Status(config.DataPath); err == nil {
 			err = git.Pull(config.DataPath)
-            if err != nil {
-                panic(err)
-            }
+			if err != nil {
+				panic(err)
+			}
 		} else {
-            err := git.Clone(config.Repository, config.DataPath)
-            if err != nil {
-                panic(err)
-            }
+			err := git.Clone(config.Repository, config.DataPath)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 

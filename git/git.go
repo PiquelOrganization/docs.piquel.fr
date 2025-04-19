@@ -15,8 +15,8 @@ func Clone(url, path string) error {
 
 // BE CAREFUL WHERE YOU USE THIS, INPUTS ARE NOT SANITIZED
 func Status(path string) error {
-    cmd := exec.Command("git", "status")
-    cmd.Dir = path
+	cmd := exec.Command("git", "status")
+	cmd.Dir = path
 
 	log.Printf("[Git] Getting status of repository in %s", path)
 	return cmd.Run()
@@ -24,8 +24,8 @@ func Status(path string) error {
 
 // BE CAREFUL WHERE YOU USE THIS, INPUTS ARE NOT SANITIZED
 func Pull(path string) error {
-    cmd := exec.Command("git", "pull")
-    cmd.Dir = path
+	cmd := exec.Command("git", "pull")
+	cmd.Dir = path
 
 	log.Printf("[Git] Pulling repository in %s", path)
 	return cmd.Run()
