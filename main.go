@@ -29,6 +29,8 @@ func runDocsService(config *config.Config) {
 		// TODO: clone/pull repo
 	}
 
+    source := source.NewRealSource(config)
+
 	markdownFiles := source.LoadFiles(config)
 	htmlFiles := utils.TranslateFiles(markdownFiles)
 	utils.SetupRouterFromLoadedFiles(router, htmlFiles)

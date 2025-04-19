@@ -9,11 +9,23 @@ import (
 	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 )
 
-func LoadFiles(config *config.Config) utils.Files {
-	return getFilesFromDir(config, config.DataPath)
+type Source interface {
+	LoadFiles() utils.File
 }
 
-func getFilesFromDir(config *config.Config, path string) utils.Files {
+type RealSource struct {
+	config *config.Config
+}
+
+func NewRealSource(config *config.Config) *RealSource {
+	return &RealSource{config}
+}
+
+func (s *RealSource) LoadFiles(config *config.Config) utils.Files {
+	return s.getFilesFromDir(config.DataPath)
+}
+
+func (s *RealSource) getFilesFromDir(path string) utils.Files {
 	files := utils.Files{}
 
 	dir, err := os.ReadDir(path)
@@ -24,7 +36,7 @@ func getFilesFromDir(config *config.Config, path string) utils.Files {
 	for _, entry := range dir {
 		name := entry.Name()
 		if entry.IsDir() {
-			files = append(files, getFilesFromDir(config, fmt.Sprintf("%s/%s", path, name))...)
+			files = append(files, s.getFilesFromDir(fmt.Sprintf("%s/%s", path, name))...)
 			continue
 		}
 
@@ -37,7 +49,7 @@ func getFilesFromDir(config *config.Config, path string) utils.Files {
 			panic(err)
 		}
 
-		filePath := strings.Replace(file.Name(), config.DataPath, "", 1)
+		filePath := strings.Replace(file.Name(), s.config.DataPath, "", 1)
 		filePath = strings.Replace(filePath, ".md", "", 1)
 		filePath = strings.Trim(filePath, "/")
 		filePath = fmt.Sprintf("/%s", filePath)
