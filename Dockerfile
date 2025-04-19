@@ -18,9 +18,11 @@ RUN go mod tidy
 RUN CGO_ENABLED=0 go build -o ./bin/main ./main.go
 
 # Now for run env
-FROM alpine/git:latest
+FROM alpine:latest
 
 WORKDIR /docs.piquel.fr
+
+RUN apk add --no-cache git
 
 # Copy static files and configuration
 COPY --from=builder /docs.piquel.fr/bin/main .
