@@ -16,10 +16,6 @@ func LoadConfig() *Config {
 	useGit := useGitString == "true"
 	repository := ""
 
-	useWebhookString := getDefaultEnv("USE_WEBHOOK", "false")
-	useWebhook := useWebhookString == "true"
-	webhookSecret := getDefaultEnv("WEBHOOK_SECRET", "")
-
 	if useGit {
 		repository = getEnv("REPOSITORY")
 	}
@@ -31,8 +27,7 @@ func LoadConfig() *Config {
 		DataPath:      getDefaultEnv("DATA_PATH", "/docs/data"),
 		UseGit:        useGit,
 		Repository:    repository,
-		UseWebhook:    useWebhook,
-		WebhookSecret: webhookSecret,
+		WebhookSecret: getEnv("WEBHOOK_SECRET"),
 	}
 }
 
