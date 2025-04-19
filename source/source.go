@@ -53,6 +53,7 @@ func (s *RealSource) getFilesFromDir(path string) utils.Files {
 		filePath = strings.Replace(filePath, ".md", "", 1)
 		filePath = strings.Trim(filePath, "/")
 		filePath = fmt.Sprintf("/%s", filePath)
+		filePath = strings.ToLower(filePath)
 
 		fileData, err := os.ReadFile(file.Name())
 		if err != nil {
