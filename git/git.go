@@ -1,15 +1,31 @@
 package git
 
-// TODO: implement git wrapper
+import "os/exec"
 
-func Clone(url, path string) {
-	return
+// WARNING: ONLY USE THESE WITH TRUSTED DATA
+
+// BE CAREFUL WHERE YOU USE THIS, INPUTS ARE NOT SANITIZED
+func Clone(url, path string) error {
+	cmd := exec.Command("git", "clone", url, path)
+	return cmd.Run()
 }
 
-func RepoAtPath(path string) bool {
-	return false
+// BE CAREFUL WHERE YOU USE THIS, INPUTS ARE NOT SANITIZED
+func RepoAtPath(path string) error {
+	err := exec.Command("cd", path).Run()
+	if err != nil {
+		return err
+	}
+
+	return exec.Command("git", "status").Run()
 }
 
-func Pull(path string) {
-	return
+// BE CAREFUL WHERE YOU USE THIS, INPUTS ARE NOT SANITIZED
+func Pull(path string) error {
+	err := exec.Command("cd", path).Run()
+	if err != nil {
+		return err
+	}
+
+	return exec.Command("git", "pull").Run()
 }
