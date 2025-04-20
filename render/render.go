@@ -34,7 +34,8 @@ func (r *RealRenderer) Init() {
 }
 
 func (r *RealRenderer) RenderDocs() {
-	// TODO: render the documentation (namely include syntax, ...)
+    // TODO: render properly
+    // namely: includes & styles
 }
 
 func (r *RealRenderer) RenderHTML() {
@@ -52,4 +53,5 @@ func (r *RealRenderer) SetupRouter() {
 		handler := utils.GenerateHandler(data)
 		r.router.HandleFunc(route, handler).Methods(http.MethodGet)
 	}
+    // TODO: serve assets & styles
 }
