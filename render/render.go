@@ -25,11 +25,12 @@ type RealRenderer struct {
 	router *mux.Router
 	source source.Source
 
-	files utils.Files
+	input   utils.SourceDocs
+	output utils.RenderedDocs
 }
 
 func (r *RealRenderer) Init() {
-	r.files = r.source.LoadFiles()
+	r.input = r.source.LoadFiles()
 }
 
 func (r *RealRenderer) RenderDocs() {
@@ -37,18 +38,18 @@ func (r *RealRenderer) RenderDocs() {
 }
 
 func (r *RealRenderer) RenderHTML() {
-	htmlFiles := utils.Files{}
-	for _, file := range r.files {
-		html := utils.MarkdownToHTML(file.Data)
-		htmlFile := utils.File{Route: file.Route, Data: html}
-		htmlFiles = append(htmlFiles, htmlFile)
-	}
-	r.files = htmlFiles
+    outputPages := make(utils.Pages)
+
+    for route, data := range r.input.Pages {
+        outputPages[route] = utils.MarkdownToHTML(data)
+    }
+
+    r.output.Pages = outputPages
 }
 
 func (r *RealRenderer) SetupRouter() {
-	for _, file := range r.files {
-		handler := utils.GenerateHandler(file.Data)
-		r.router.HandleFunc(file.Route, handler).Methods(http.MethodGet)
+	for route, data := range r.output.Pages {
+		handler := utils.GenerateHandler(data)
+		r.router.HandleFunc(route, handler).Methods(http.MethodGet)
 	}
 }
