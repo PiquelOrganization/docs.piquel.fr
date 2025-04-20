@@ -10,7 +10,7 @@ import (
 )
 
 type Renderer interface {
-    Init()
+	Init()
 	RenderDocs()
 	RenderHTML()
 	SetupRouter()
@@ -40,7 +40,7 @@ func (r *RealRenderer) RenderHTML() {
 	htmlFiles := utils.Files{}
 	for _, file := range r.files {
 		html := utils.MarkdownToHTML(file.Data)
-		htmlFile := utils.File{Path: file.Path, Data: html}
+		htmlFile := utils.File{Route: file.Route, Data: html}
 		htmlFiles = append(htmlFiles, htmlFile)
 	}
 	r.files = htmlFiles
@@ -49,6 +49,6 @@ func (r *RealRenderer) RenderHTML() {
 func (r *RealRenderer) SetupRouter() {
 	for _, file := range r.files {
 		handler := utils.GenerateHandler(file.Data)
-		r.router.HandleFunc(file.Path, handler).Methods(http.MethodGet)
+		r.router.HandleFunc(file.Route, handler).Methods(http.MethodGet)
 	}
 }

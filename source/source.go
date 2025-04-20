@@ -61,7 +61,7 @@ func (s *RealSource) getFilesFromDir(path string) utils.Files {
 		}
 
 		docsFile := utils.File{
-			Path: filePath,
+			Route: filePath,
 			Data: fileData,
 		}
 

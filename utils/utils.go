@@ -8,13 +8,6 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 )
 
-type Files []File
-
-type File struct {
-	Path string
-	Data []byte
-}
-
 func MarkdownToHTML(md []byte) []byte {
 	// markdown parser
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
