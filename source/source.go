@@ -2,6 +2,7 @@ package source
 
 import (
 	"fmt"
+	"maps"
 	"os"
 	"strings"
 
@@ -10,7 +11,7 @@ import (
 )
 
 type Source interface {
-	LoadFiles() utils.Files
+	LoadFiles() utils.SourceDocs
 }
 
 type RealSource struct {
@@ -21,12 +22,13 @@ func NewSource(config *config.Config) Source {
 	return &RealSource{config}
 }
 
-func (s *RealSource) LoadFiles() utils.Files {
-	return s.getFilesFromDir(s.config.DataPath)
+func (s *RealSource) LoadFiles() utils.SourceDocs {
+	//s.getFilesFromDir(s.config.DataPath)
+	return utils.SourceDocs{}
 }
 
-func (s *RealSource) getFilesFromDir(path string) utils.Files {
-	files := utils.Files{}
+func (s *RealSource) getFilesFromDir(path string) utils.Pages {
+	pages := utils.Pages{}
 
 	dir, err := os.ReadDir(path)
 	if err != nil {
@@ -36,7 +38,7 @@ func (s *RealSource) getFilesFromDir(path string) utils.Files {
 	for _, entry := range dir {
 		name := entry.Name()
 		if entry.IsDir() {
-			files = append(files, s.getFilesFromDir(fmt.Sprintf("%s/%s", path, name))...)
+			maps.Copy(pages, s.getFilesFromDir(fmt.Sprintf("%s/%s", path, name)))
 			continue
 		}
 
@@ -60,13 +62,8 @@ func (s *RealSource) getFilesFromDir(path string) utils.Files {
 			panic(err)
 		}
 
-		docsFile := utils.File{
-			Route: filePath,
-			Data: fileData,
-		}
-
-		files = append(files, docsFile)
+		pages[filePath] = fileData
 	}
 
-	return files
+	return pages
 }
