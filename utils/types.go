@@ -21,7 +21,7 @@ type Asset struct {
 type SourceDocs struct {
 	Pages    Pages // the standalone pages to serve
 	Includes Pages // the markdown that can be included in other pages
-	Styles   Assets
+	Styles   Pages
 	Assets   Assets
 }
 
