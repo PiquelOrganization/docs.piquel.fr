@@ -38,7 +38,7 @@ func (r *RealRenderer) RenderDocs() {
 }
 
 func (r *RealRenderer) RenderHTML() {
-    outputPages := make(utils.Pages)
+    outputPages := make(utils.Files)
 
     for route, data := range r.input.Pages {
         outputPages[route] = utils.MarkdownToHTML(data)
