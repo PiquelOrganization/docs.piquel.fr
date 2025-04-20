@@ -1,7 +1,9 @@
 package source
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"maps"
 	"os"
 	"strings"
@@ -23,12 +25,36 @@ func NewSource(config *config.Config) Source {
 }
 
 func (s *RealSource) LoadFiles() utils.SourceDocs {
-	//s.getFilesFromDir(s.config.DataPath)
-	return utils.SourceDocs{}
+	pages := s.getFilesFromDir(s.config.DataPath, "md")
+	commonFolder := fmt.Sprintf("%s/.common", s.config.DataPath)
+
+	if file, err := os.Stat(commonFolder); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			log.Printf("[Source] No common folder")
+			return utils.SourceDocs{Pages: pages}
+		}
+		panic(err)
+	} else {
+		if !file.IsDir() {
+			log.Printf("[Source] No common folder")
+			return utils.SourceDocs{Pages: pages}
+		}
+	}
+
+	includes := s.getFilesFromDir(fmt.Sprintf("%s/includes", commonFolder), ".md")
+	styles := s.getFilesFromDir(fmt.Sprintf("%s/styles", commonFolder), ".css")
+	assets := s.getFilesFromDir(fmt.Sprintf("%s/assets", commonFolder), "")
+
+	return utils.SourceDocs{
+		Pages:    pages,
+		Includes: includes,
+		Styles:   styles,
+		Assets:   assets,
+	}
 }
 
-func (s *RealSource) getFilesFromDir(path string) utils.Pages {
-	pages := utils.Pages{}
+func (s *RealSource) getFilesFromDir(path, ext string) utils.Files {
+	pages := utils.Files{}
 
 	dir, err := os.ReadDir(path)
 	if err != nil {
@@ -37,12 +63,17 @@ func (s *RealSource) getFilesFromDir(path string) utils.Pages {
 
 	for _, entry := range dir {
 		name := entry.Name()
-		if entry.IsDir() {
-			maps.Copy(pages, s.getFilesFromDir(fmt.Sprintf("%s/%s", path, name)))
+
+		if strings.HasPrefix(name, ".") {
 			continue
 		}
 
-		if !strings.HasSuffix(name, ".md") {
+		if entry.IsDir() {
+			maps.Copy(pages, s.getFilesFromDir(fmt.Sprintf("%s/%s", path, name), ext))
+			continue
+		}
+
+		if ext != "" && !strings.HasSuffix(name, ext) {
 			continue
 		}
 
@@ -52,7 +83,9 @@ func (s *RealSource) getFilesFromDir(path string) utils.Pages {
 		}
 
 		filePath := strings.Replace(file.Name(), s.config.DataPath, "", 1)
-		filePath = strings.Replace(filePath, ".md", "", 1)
+		if ext != "" {
+			filePath = strings.ReplaceAll(filePath, ext, "")
+		}
 		filePath = strings.Trim(filePath, "/")
 		filePath = fmt.Sprintf("/%s", filePath)
 		filePath = strings.ToLower(filePath)
