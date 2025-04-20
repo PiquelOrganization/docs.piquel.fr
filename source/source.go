@@ -87,6 +87,7 @@ func (s *RealSource) getFilesFromDir(path, ext string) utils.Files {
 			filePath = strings.ReplaceAll(filePath, ext, "")
 		}
 		filePath = strings.Trim(filePath, "/")
+		filePath = strings.Trim(filePath, ".")
 		filePath = fmt.Sprintf("/%s", filePath)
 		filePath = strings.ToLower(filePath)
 
