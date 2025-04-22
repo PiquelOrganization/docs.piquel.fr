@@ -1,7 +1,11 @@
 package render
 
 import (
+	"fmt"
+	"maps"
 	"net/http"
+	"os"
+	"strings"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
@@ -47,6 +51,8 @@ func (r *RealRenderer) RenderHTML() {
 	}
 
 	r.output.Pages = outputPages
+	r.output.Static = r.input.Styles
+	maps.Copy(r.output.Static, r.input.Assets)
 }
 
 func (r *RealRenderer) GetOutput() utils.RenderedDocs {
@@ -58,5 +64,15 @@ func (r *RealRenderer) SetupRouter() {
 		handler := utils.GenerateHandler(data)
 		r.router.HandleFunc(route, handler).Methods(http.MethodGet)
 	}
-	// TODO: serve assets & styles
+
+	staticDir := "/home/piquel/tmp"
+	for file, data := range r.output.Static {
+		path := fmt.Sprintf("%s/%s", staticDir, strings.Trim(file, "/"))
+		err := os.WriteFile(path, data, os.FileMode(int(0644)))
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	r.router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(staticDir))))
 }
