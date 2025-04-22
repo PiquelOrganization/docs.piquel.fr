@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
 )
@@ -46,5 +47,7 @@ func (s *Server) Restart() {
 
 func (s *Server) Shutdown(context context.Context) {
 	log.Printf("[Server] Shutting down...")
+    // wait for everything to finish up before shutting down
+    time.Sleep(time.Millisecond*100)
 	s.Server.Shutdown(context)
 }
