@@ -28,6 +28,12 @@ type RealRenderer struct {
 }
 
 func (r *RealRenderer) renderDocs() {
+	includes := utils.Files{}
+	for name, data := range r.input.Includes {
+		newName := strings.TrimRight(name, ".md")
+		includes[newName] = data
+	}
+
 	// TODO: render properly
 	// namely: includes & styles
 }
