@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -28,6 +29,7 @@ func LoadConfig() *Config {
 		UseGit:        useGit,
 		Repository:    repository,
 		WebhookSecret: getEnv("WEBHOOK_SECRET"),
+		HomePage:      strings.ToLower(getDefaultEnv("HOME_PAGE", "")),
 	}
 }
 

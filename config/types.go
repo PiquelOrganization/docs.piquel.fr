@@ -8,4 +8,5 @@ type Config struct {
 	UseGit        bool   // wether to use git (and thus the repository)
 	Repository    string // the reposityory to get the pages from
 	WebhookSecret string // the secret to use to validate the webhook
+	HomePage      string // the page to render at / (only used by RouterOutput)
 }
