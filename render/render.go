@@ -13,6 +13,7 @@ type Renderer interface {
 	Init()
 	RenderDocs()
 	RenderHTML()
+	GetOutput() utils.RenderedDocs
 	SetupRouter()
 }
 
@@ -25,7 +26,7 @@ type RealRenderer struct {
 	router *mux.Router
 	source source.Source
 
-	input   utils.SourceDocs
+	input  utils.SourceDocs
 	output utils.RenderedDocs
 }
 
@@ -34,18 +35,22 @@ func (r *RealRenderer) Init() {
 }
 
 func (r *RealRenderer) RenderDocs() {
-    // TODO: render properly
-    // namely: includes & styles
+	// TODO: render properly
+	// namely: includes & styles
 }
 
 func (r *RealRenderer) RenderHTML() {
-    outputPages := make(utils.Files)
+	outputPages := make(utils.Files)
 
-    for route, data := range r.input.Pages {
-        outputPages[route] = utils.MarkdownToHTML(data)
-    }
+	for route, data := range r.input.Pages {
+		outputPages[route] = utils.MarkdownToHTML(data)
+	}
 
-    r.output.Pages = outputPages
+	r.output.Pages = outputPages
+}
+
+func (r *RealRenderer) GetOutput() utils.RenderedDocs {
+	return r.output
 }
 
 func (r *RealRenderer) SetupRouter() {
@@ -53,5 +58,5 @@ func (r *RealRenderer) SetupRouter() {
 		handler := utils.GenerateHandler(data)
 		r.router.HandleFunc(route, handler).Methods(http.MethodGet)
 	}
-    // TODO: serve assets & styles
+	// TODO: serve assets & styles
 }
