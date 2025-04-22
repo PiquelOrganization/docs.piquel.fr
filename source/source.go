@@ -1,7 +1,6 @@
 package source
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"maps"
@@ -25,35 +24,34 @@ func NewSource(config *config.Config) Source {
 }
 
 func (s *RealSource) LoadFiles() utils.SourceDocs {
-	pages := s.getFilesFromDir(s.config.DataPath, "md")
+	files := utils.SourceDocs{}
+	files.Pages = s.getFilesFromDir(s.config.DataPath, "md", s.config.DataPath, true)
 	commonFolder := fmt.Sprintf("%s/.common", s.config.DataPath)
 
-	if file, err := os.Stat(commonFolder); err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			log.Printf("[Source] No common folder")
-			return utils.SourceDocs{Pages: pages}
-		}
-		panic(err)
-	} else {
-		if !file.IsDir() {
-			log.Printf("[Source] No common folder")
-			return utils.SourceDocs{Pages: pages}
-		}
+	if !isDir(commonFolder) {
+		log.Printf("[Source] No common folder")
+		return files
 	}
 
-	includes := s.getFilesFromDir(fmt.Sprintf("%s/includes", commonFolder), ".md")
-	styles := s.getFilesFromDir(fmt.Sprintf("%s/styles", commonFolder), ".css")
-	assets := s.getFilesFromDir(fmt.Sprintf("%s/assets", commonFolder), "")
-
-	return utils.SourceDocs{
-		Pages:    pages,
-		Includes: includes,
-		Styles:   styles,
-		Assets:   assets,
+	includesDir := fmt.Sprintf("%s/includes", commonFolder)
+	if isDir(includesDir) {
+		files.Includes = s.getFilesFromDir(includesDir, ".md", includesDir, true)
 	}
+
+	stylesDir := fmt.Sprintf("%s/styles", commonFolder)
+	if isDir(stylesDir) {
+		files.Styles = s.getFilesFromDir(stylesDir, ".css", stylesDir, false)
+	}
+
+	assetsDir := fmt.Sprintf("%s/assets", commonFolder)
+	if isDir(assetsDir) {
+		files.Assets = s.getFilesFromDir(assetsDir, "", assetsDir, false)
+	}
+
+	return files
 }
 
-func (s *RealSource) getFilesFromDir(path, ext string) utils.Files {
+func (s *RealSource) getFilesFromDir(path, ext, root string, removeExt bool) utils.Files {
 	pages := utils.Files{}
 
 	dir, err := os.ReadDir(path)
@@ -69,7 +67,7 @@ func (s *RealSource) getFilesFromDir(path, ext string) utils.Files {
 		}
 
 		if entry.IsDir() {
-			maps.Copy(pages, s.getFilesFromDir(fmt.Sprintf("%s/%s", path, name), ext))
+			maps.Copy(pages, s.getFilesFromDir(fmt.Sprintf("%s/%s", path, name), ext, root, removeExt))
 			continue
 		}
 
@@ -82,8 +80,8 @@ func (s *RealSource) getFilesFromDir(path, ext string) utils.Files {
 			panic(err)
 		}
 
-		filePath := strings.Replace(file.Name(), s.config.DataPath, "", 1)
-		if ext != "" {
+		filePath := strings.Replace(file.Name(), root, "", 1)
+		if ext != ""  && removeExt{
 			filePath = strings.ReplaceAll(filePath, ext, "")
 		}
 		filePath = strings.Trim(filePath, "/")
@@ -100,4 +98,12 @@ func (s *RealSource) getFilesFromDir(path, ext string) utils.Files {
 	}
 
 	return pages
+}
+
+func isDir(path string) bool {
+	if file, err := os.Stat(path); err != nil {
+		return false
+	} else {
+		return file.IsDir()
+	}
 }
