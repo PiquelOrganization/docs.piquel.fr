@@ -2,6 +2,7 @@ package output
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -44,7 +45,7 @@ func (o *RouterOutput) Output() error {
 
 	staticDir := "/home/piquel/tmp"
 	for file, data := range output.Static {
-		path := fmt.Sprintf("%s/%s", staticDir, strings.Trim(file, "/"))
+		path := fmt.Sprintf("%s/%s", staticDir, file)
 		err := os.WriteFile(path, data, os.FileMode(int(0644)))
 		if err != nil {
 			return err

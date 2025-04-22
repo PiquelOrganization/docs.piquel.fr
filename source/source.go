@@ -83,7 +83,6 @@ func (s *GitSource) getFilesFromDir(root, path, ext string) utils.Files {
 
 		filePath := strings.Replace(file.Name(), root, "", 1)
 		filePath = strings.Trim(filePath, "/")
-		filePath = fmt.Sprintf("/%s", filePath)
 		filePath = strings.ToLower(filePath)
 
 		fileData, err := os.ReadFile(file.Name())
