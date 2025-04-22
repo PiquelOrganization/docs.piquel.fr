@@ -1,11 +1,7 @@
 package render
 
 import (
-	"fmt"
 	"maps"
-	"net/http"
-	"os"
-	"strings"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
@@ -14,11 +10,7 @@ import (
 )
 
 type Renderer interface {
-	Init()
-	RenderDocs()
-	RenderHTML()
-	GetOutput() utils.RenderedDocs
-	SetupRouter()
+	RenderOutput() utils.RenderedDocs
 }
 
 func NewRenderer(config *config.Config, router *mux.Router, source source.Source) Renderer {
@@ -34,16 +26,12 @@ type RealRenderer struct {
 	output utils.RenderedDocs
 }
 
-func (r *RealRenderer) Init() {
-	r.input = r.source.LoadFiles()
-}
-
-func (r *RealRenderer) RenderDocs() {
+func (r *RealRenderer) renderDocs() {
 	// TODO: render properly
 	// namely: includes & styles
 }
 
-func (r *RealRenderer) RenderHTML() {
+func (r *RealRenderer) renderHTML() {
 	outputPages := make(utils.Files)
 
 	for route, data := range r.input.Pages {
@@ -55,24 +43,9 @@ func (r *RealRenderer) RenderHTML() {
 	maps.Copy(r.output.Static, r.input.Assets)
 }
 
-func (r *RealRenderer) GetOutput() utils.RenderedDocs {
+func (r *RealRenderer) RenderOutput() utils.RenderedDocs {
+	r.input = r.source.LoadFiles()
+	r.renderDocs()
+	r.renderHTML()
 	return r.output
-}
-
-func (r *RealRenderer) SetupRouter() {
-	for route, data := range r.output.Pages {
-		handler := utils.GenerateHandler(data)
-		r.router.HandleFunc(route, handler).Methods(http.MethodGet)
-	}
-
-	staticDir := "/home/piquel/tmp"
-	for file, data := range r.output.Static {
-		path := fmt.Sprintf("%s/%s", staticDir, strings.Trim(file, "/"))
-		err := os.WriteFile(path, data, os.FileMode(int(0644)))
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	r.router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(staticDir))))
 }

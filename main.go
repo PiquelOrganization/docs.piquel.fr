@@ -6,6 +6,7 @@ import (
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
 	"github.com/PiquelOrganization/docs.piquel.fr/git"
+	"github.com/PiquelOrganization/docs.piquel.fr/output"
 	"github.com/PiquelOrganization/docs.piquel.fr/render"
 	"github.com/PiquelOrganization/docs.piquel.fr/server"
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
@@ -28,6 +29,7 @@ func runDocsService(config *config.Config) {
 	router := mux.NewRouter()
 	source := source.NewSource(config)
 	renderer := render.NewRenderer(config, router, source)
+	output := output.NewOutput(router, renderer)
 	DocsServer := server.NewServer(config, router)
 
 	if config.UseGit {
@@ -46,10 +48,7 @@ func runDocsService(config *config.Config) {
 		}
 	}
 
-	renderer.Init()
-	renderer.RenderDocs()
-	renderer.RenderHTML()
-	renderer.SetupRouter()
+	output.Output()
 
 	done := make(chan error)
 	go DocsServer.Serve(done)
