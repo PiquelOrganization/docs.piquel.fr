@@ -29,7 +29,7 @@ func runDocsService(config *config.Config) {
 	router := mux.NewRouter()
 	source := source.NewSource(config)
 	renderer := render.NewRenderer(config, router, source)
-	output := output.NewOutput(router, renderer)
+	output := output.NewOutput(router, config, renderer)
 	DocsServer := server.NewServer(config, router)
 
 	if config.UseGit {
