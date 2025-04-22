@@ -2,6 +2,7 @@ package render
 
 import (
 	"maps"
+	"strings"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
@@ -35,6 +36,7 @@ func (r *RealRenderer) renderHTML() {
 	outputPages := make(utils.Files)
 
 	for route, data := range r.input.Pages {
+		route = strings.ReplaceAll(route, ".md", ".html")
 		outputPages[route] = utils.MarkdownToHTML(data)
 	}
 

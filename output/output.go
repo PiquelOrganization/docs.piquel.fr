@@ -28,6 +28,7 @@ func (o *RouterOutput) Output() error {
 	output := o.renderer.RenderOutput()
 
 	for route, data := range output.Pages {
+		route = strings.TrimRight(route, ".html")
 		handler := utils.GenerateHandler(data)
 		o.router.HandleFunc(route, handler).Methods(http.MethodGet)
 	}
