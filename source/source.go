@@ -15,15 +15,15 @@ type Source interface {
 	LoadFiles() utils.SourceDocs
 }
 
-type RealSource struct {
+type GitSource struct {
 	config *config.Config
 }
 
 func NewSource(config *config.Config) Source {
-	return &RealSource{config}
+	return &GitSource{config}
 }
 
-func (s *RealSource) LoadFiles() utils.SourceDocs {
+func (s *GitSource) LoadFiles() utils.SourceDocs {
 	files := utils.SourceDocs{}
 	files.Pages = s.getFilesFromDir(s.config.DataPath, "md", s.config.DataPath, true)
 	commonFolder := fmt.Sprintf("%s/.common", s.config.DataPath)
@@ -51,7 +51,7 @@ func (s *RealSource) LoadFiles() utils.SourceDocs {
 	return files
 }
 
-func (s *RealSource) getFilesFromDir(path, ext, root string, removeExt bool) utils.Files {
+func (s *GitSource) getFilesFromDir(path, ext, root string, removeExt bool) utils.Files {
 	pages := utils.Files{}
 
 	dir, err := os.ReadDir(path)
