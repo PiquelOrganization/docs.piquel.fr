@@ -25,7 +25,7 @@ func NewSource(config *config.Config) Source {
 
 func (s *GitSource) LoadFiles() utils.SourceDocs {
 	files := utils.SourceDocs{}
-	files.Pages = s.getFilesFromDir(s.config.DataPath, "md", s.config.DataPath, true)
+	files.Pages = s.getFilesFromDir(s.config.DataPath, s.config.DataPath, ".md")
 	commonFolder := fmt.Sprintf("%s/.common", s.config.DataPath)
 
 	if !isDir(commonFolder) {
@@ -35,23 +35,23 @@ func (s *GitSource) LoadFiles() utils.SourceDocs {
 
 	includesDir := fmt.Sprintf("%s/includes", commonFolder)
 	if isDir(includesDir) {
-		files.Includes = s.getFilesFromDir(includesDir, ".md", includesDir, true)
+		files.Includes = s.getFilesFromDir(includesDir, includesDir, ".md")
 	}
 
 	stylesDir := fmt.Sprintf("%s/styles", commonFolder)
 	if isDir(stylesDir) {
-		files.Styles = s.getFilesFromDir(stylesDir, ".css", stylesDir, false)
+		files.Styles = s.getFilesFromDir(stylesDir, stylesDir, ".css")
 	}
 
 	assetsDir := fmt.Sprintf("%s/assets", commonFolder)
 	if isDir(assetsDir) {
-		files.Assets = s.getFilesFromDir(assetsDir, "", assetsDir, false)
+		files.Assets = s.getFilesFromDir(assetsDir, assetsDir, "")
 	}
 
 	return files
 }
 
-func (s *GitSource) getFilesFromDir(path, ext, root string, removeExt bool) utils.Files {
+func (s *GitSource) getFilesFromDir(root, path, ext string) utils.Files {
 	pages := utils.Files{}
 
 	dir, err := os.ReadDir(path)
@@ -66,8 +66,9 @@ func (s *GitSource) getFilesFromDir(path, ext, root string, removeExt bool) util
 			continue
 		}
 
+		newPath := fmt.Sprintf("%s/%s", path, name)
 		if entry.IsDir() {
-			maps.Copy(pages, s.getFilesFromDir(fmt.Sprintf("%s/%s", path, name), ext, root, removeExt))
+			maps.Copy(pages, s.getFilesFromDir(root, newPath, ext))
 			continue
 		}
 
@@ -75,17 +76,13 @@ func (s *GitSource) getFilesFromDir(path, ext, root string, removeExt bool) util
 			continue
 		}
 
-		file, err := os.Open(fmt.Sprintf("%s/%s", path, name))
+		file, err := os.Open(newPath)
 		if err != nil {
 			panic(err)
 		}
 
 		filePath := strings.Replace(file.Name(), root, "", 1)
-		if ext != ""  && removeExt{
-			filePath = strings.ReplaceAll(filePath, ext, "")
-		}
 		filePath = strings.Trim(filePath, "/")
-		filePath = strings.Trim(filePath, ".")
 		filePath = fmt.Sprintf("/%s", filePath)
 		filePath = strings.ToLower(filePath)
 
