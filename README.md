@@ -10,3 +10,4 @@ My own homemade, self-hosted gitbook alternative
 - `render/render.go`
   - Do custom rendering
   - Modify HTML renderer according to config
+- Add styles
