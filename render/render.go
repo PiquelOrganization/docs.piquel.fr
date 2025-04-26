@@ -14,7 +14,7 @@ type Renderer interface {
 	RenderOutput() utils.RenderedDocs
 }
 
-func NewRenderer(config *config.Config, router *mux.Router, source source.Source) Renderer {
+func NewRealRenderer(config *config.Config, router *mux.Router, source source.Source) Renderer {
 	return &RealRenderer{config: config, router: router, source: source}
 }
 

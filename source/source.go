@@ -19,7 +19,7 @@ type GitSource struct {
 	config *config.Config
 }
 
-func NewSource(config *config.Config) Source {
+func NewGitSource(config *config.Config) Source {
 	return &GitSource{config}
 }
 

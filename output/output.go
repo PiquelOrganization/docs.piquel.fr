@@ -22,7 +22,7 @@ type RouterOutput struct {
 	renderer render.Renderer
 }
 
-func NewOutput(router *mux.Router, config *config.Config, renderer render.Renderer) Output {
+func NewRouterOutput(router *mux.Router, config *config.Config, renderer render.Renderer) Output {
 	return &RouterOutput{router, config, renderer}
 }
 
