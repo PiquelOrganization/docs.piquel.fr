@@ -43,7 +43,7 @@ func (r *RealRenderer) renderHTML() {
 
 	for route, data := range r.input.Pages {
 		route = strings.ReplaceAll(route, ".md", ".html")
-		outputPages[route] = utils.MarkdownToHTML(data)
+		outputPages[route] = markdownToHTML(data)
 	}
 
 	r.output.Pages = outputPages
