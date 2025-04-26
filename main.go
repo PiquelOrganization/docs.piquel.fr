@@ -28,6 +28,7 @@ func main() {
 
 	handler := handlers.NewHandler(config, source, renderer)
 	router.HandleFunc("/gh-push", handler.GithubPushHandler).Methods(http.MethodPost)
+	router.HandleFunc("/", handler.RootHandler).Methods(http.MethodGet)
 
 	done := make(chan error)
 	go func() {

@@ -18,6 +18,14 @@ func NewHandler(config *config.Config, source source.Source, renderer render.Ren
 	return &Handler{config, source, renderer}
 }
 
+func (h *Handler) RootHandler(w http.ResponseWriter, r *http.Request) {
+	h.handleDocsPath(w, r, h.config.HomePage)
+}
+
+func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path string) {
+	// TODO
+}
+
 func (h *Handler) GithubPushHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	// body, err := io.ReadAll(r.Body)
