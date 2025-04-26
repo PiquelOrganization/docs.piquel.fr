@@ -18,4 +18,3 @@ func markdownToHTML(md []byte) []byte {
 
 	return markdown.ToHTML(md, p, renderer)
 }
-

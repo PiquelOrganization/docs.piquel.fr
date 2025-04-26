@@ -5,8 +5,8 @@ import (
 )
 
 type Renderer interface {
-	RenderAllFiles(config RenderConfig) map[string][]byte
-	RenderFile(path string, config RenderConfig) []byte
+	RenderAllFiles(config RenderConfig) (map[string][]byte, error)
+	RenderFile(path string, config RenderConfig) ([]byte, error)
 }
 
 type RenderConfig struct{}
@@ -19,17 +19,26 @@ type RealRenderer struct {
 	source source.Source
 }
 
-func (r *RealRenderer) RenderAllFiles(config RenderConfig) map[string][]byte {
+func (r *RealRenderer) RenderAllFiles(config RenderConfig) (map[string][]byte, error) {
 	files := map[string][]byte{}
-	for _, file := range r.source.GetAllFiles() {
-		files[file] = r.RenderFile(file, config)
+    fileNames, err := r.source.GetAllFiles()
+    if err != nil {
+        return map[string][]byte{}, err
+    }
+
+	for _, file := range fileNames {
+        renderedFile, err := r.RenderFile(file, config)
+        if err != nil {
+            return map[string][]byte{}, err
+        }
+		files[file] = renderedFile
 	}
-	return files
+	return files, nil
 }
 
-func (r *RealRenderer) RenderFile(path string, config RenderConfig) []byte {
+func (r *RealRenderer) RenderFile(path string, config RenderConfig) ([]byte, error) {
 	// TODO
-	return []byte{}
+	return []byte{}, nil
 }
 
 // func (r *RealRenderer) renderDocs() {

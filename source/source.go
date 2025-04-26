@@ -7,9 +7,9 @@ import (
 
 type Source interface {
 	Update() error
-	GetAllFiles() []string
-	LoadFile(path string) []byte
-	LoadInclude(path string) []byte
+	GetAllFiles() ([]string, error)
+	LoadFile(path string) ([]byte, error)
+	LoadInclude(path string) ([]byte, error)
 	GetAssetsPath() string
 }
 
@@ -45,19 +45,19 @@ func (s *GitSource) Update() error {
 	return nil
 }
 
-func (s *GitSource) GetAllFiles() []string {
+func (s *GitSource) GetAllFiles() ([]string, error) {
 	// TODO
-	return []string{}
+	return []string{}, nil
 }
 
-func (s *GitSource) LoadFile(path string) []byte {
+func (s *GitSource) LoadFile(path string) ([]byte, error) {
 	// TODO
-	return []byte{}
+	return []byte{}, nil
 }
 
-func (s *GitSource) LoadInclude(path string) []byte {
+func (s *GitSource) LoadInclude(path string) ([]byte, error) {
 	// TODO
-	return []byte{}
+	return []byte{}, nil
 }
 
 func (s *GitSource) GetAssetsPath() string {
