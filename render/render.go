@@ -5,9 +5,11 @@ import (
 )
 
 type Renderer interface {
-	RenderAllFiles() map[string][]byte
+	RenderAllFiles(config RenderConfig) map[string][]byte
 	RenderFile(path string, config RenderConfig) []byte
 }
+
+type RenderConfig struct{}
 
 func NewRealRenderer(source source.Source) Renderer {
 	return &RealRenderer{source: source}
@@ -17,11 +19,16 @@ type RealRenderer struct {
 	source source.Source
 }
 
-func (r *RealRenderer) RenderAllFiles() map[string][]byte {
-	return map[string][]byte{}
+func (r *RealRenderer) RenderAllFiles(config RenderConfig) map[string][]byte {
+	files := map[string][]byte{}
+	for _, file := range r.source.GetAllFiles() {
+		files[file] = r.RenderFile(file, config)
+	}
+	return files
 }
 
 func (r *RealRenderer) RenderFile(path string, config RenderConfig) []byte {
+	// TODO
 	return []byte{}
 }
 
