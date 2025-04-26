@@ -6,6 +6,7 @@ import (
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
 	"github.com/PiquelOrganization/docs.piquel.fr/git"
+	"github.com/PiquelOrganization/docs.piquel.fr/middleware"
 	"github.com/PiquelOrganization/docs.piquel.fr/output"
 	"github.com/PiquelOrganization/docs.piquel.fr/render"
 	"github.com/PiquelOrganization/docs.piquel.fr/server"
@@ -27,6 +28,8 @@ func runDocsService(config *config.Config) {
 	log.Printf("Starting documentation service...\n")
 
 	router := mux.NewRouter()
+    middleware.Setup(router)
+
 	source := source.NewSource(config)
 	renderer := render.NewRenderer(config, router, source)
 	output := output.NewOutput(router, config, renderer)
