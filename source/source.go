@@ -10,7 +10,7 @@ type Source interface {
 	GetAllFiles() []string
 	LoadFile(path string) []byte
 	LoadInclude(path string) []byte
-	LoadAsset(path string) []byte
+	GetAssetsPath() string
 }
 
 type GitSource struct {
@@ -57,8 +57,8 @@ func (s *GitSource) LoadInclude(path string) []byte {
 	return []byte{}
 }
 
-func (s *GitSource) LoadAsset(path string) []byte {
-	return []byte{}
+func (s *GitSource) GetAssetsPath() string {
+	return ""
 }
 
 // func (s *GitSource) LoadFiles() utils.SourceDocs {

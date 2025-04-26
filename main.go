@@ -30,6 +30,10 @@ func main() {
 	router.HandleFunc("/gh-push", handler.GithubPushHandler).Methods(http.MethodPost)
 	router.HandleFunc("/", handler.RootHandler).Methods(http.MethodGet)
 
+	if assetsPath := source.GetAssetsPath(); assetsPath != "" {
+		router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(assetsPath))))
+	}
+
 	done := make(chan error)
 	go func() {
 		address := fmt.Sprintf("0.0.0.0:%s", config.Port)
