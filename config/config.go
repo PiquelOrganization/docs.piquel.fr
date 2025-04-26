@@ -29,7 +29,7 @@ func LoadConfig() *Config {
 		UseGit:        useGit,
 		Repository:    repository,
 		WebhookSecret: getEnv("WEBHOOK_SECRET"),
-		HomePage:      strings.ToLower(getDefaultEnv("HOME_PAGE", "")),
+		HomePage:      strings.ToLower(getDefaultEnv("HOME_PAGE", "README.md")),
 	}
 }
 
