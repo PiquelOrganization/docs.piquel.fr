@@ -12,7 +12,7 @@ func markdownToHTML(md []byte) []byte {
 	p := parser.NewWithExtensions(extensions)
 
 	// html renderer
-	htmlFlags := html.CommonFlags | html.HrefTargetBlank
+	htmlFlags := html.CommonFlags
 	options := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(options)
 
