@@ -39,7 +39,7 @@ func (o *RouterOutput) Output() error {
 	for route, data := range output.Pages {
 		route = strings.TrimRight(route, ".html")
 		handler := utils.GenerateHandler(data)
-		o.router.HandleFunc(route, handler).Methods(http.MethodGet)
+		o.router.HandleFunc(fmt.Sprintf("/%s", route), handler).Methods(http.MethodGet)
 	}
 
 	staticDir := "/home/piquel/tmp"
