@@ -31,7 +31,7 @@ func NewGitSource(config *config.Config) Source {
 
 func (s *GitSource) Update() error {
 	if err := git.Status(s.dataPath); err == nil {
-		err = git.Pull(s.repository)
+		err = git.Pull(s.dataPath)
 		if err != nil {
 			return err
 		}
