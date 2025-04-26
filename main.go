@@ -26,13 +26,12 @@ func main() {
 
 	renderer := render.NewRealRenderer(source)
 
-	handler := handlers.NewHandler(config, source, renderer)
-	router.HandleFunc("/gh-push", handler.GithubPushHandler).Methods(http.MethodPost)
-	router.HandleFunc("/", handler.RootHandler).Methods(http.MethodGet)
-
+	var staticHandler http.Handler
 	if assetsPath := source.GetAssetsPath(); assetsPath != "" {
-		router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(assetsPath))))
+		staticHandler = http.StripPrefix("/", http.FileServer(http.Dir(assetsPath)))
 	}
+	handler := handlers.NewHandler(config, source, renderer, staticHandler)
+	router.PathPrefix("/").Handler(handler).Methods(http.MethodPost, http.MethodGet)
 
 	done := make(chan error)
 	go func() {
