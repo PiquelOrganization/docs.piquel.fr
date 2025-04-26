@@ -1,60 +1,45 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
-	"github.com/PiquelOrganization/docs.piquel.fr/git"
+	"github.com/PiquelOrganization/docs.piquel.fr/handlers"
 	"github.com/PiquelOrganization/docs.piquel.fr/middleware"
-	"github.com/PiquelOrganization/docs.piquel.fr/output"
 	"github.com/PiquelOrganization/docs.piquel.fr/render"
-	"github.com/PiquelOrganization/docs.piquel.fr/server"
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
 	"github.com/gorilla/mux"
 )
-
-var DocsServer server.Server
 
 func main() {
 	log.Printf("Initializing documentation service...\n")
 
 	config := config.LoadConfig()
 
-	runDocsService(config)
-}
-
-func runDocsService(config *config.Config) {
-	log.Printf("Starting documentation service...\n")
-
 	router := mux.NewRouter()
-    middleware.Setup(router)
+	middleware.Setup(router)
 
 	source := source.NewGitSource(config)
-	renderer := render.NewRealRenderer(config, router, source)
-	output := output.NewRouterOutput(router, config, renderer)
-	DocsServer := server.NewServer(config, router)
+	source.Update()
+
+	renderer := render.NewRealRenderer(source)
+	handler := handlers.NewHandler(config, source, renderer)
 
 	if config.UseGit {
-		router.HandleFunc("/gh-push", DocsServer.GithubPushHandler).Methods(http.MethodPost)
+		router.HandleFunc("/gh-push", handler.GithubPushHandler).Methods(http.MethodPost)
 
-		if err := git.Status(config.DataPath); err == nil {
-			err = git.Pull(config.DataPath)
-			if err != nil {
-				panic(err)
-			}
-		} else {
-			err := git.Clone(config.Repository, config.DataPath)
-			if err != nil {
-				panic(err)
-			}
-		}
 	}
 
-	output.Output()
-
 	done := make(chan error)
-	go DocsServer.Serve(done)
+	go func() {
+		address := fmt.Sprintf("0.0.0.0:%s", config.Port)
+		log.Printf("[Server] Starting server on %s\n", address)
+
+		err := http.ListenAndServe(address, router)
+		done <- err
+	}()
 
 	err := <-done
 	if err != http.ErrServerClosed {
@@ -63,8 +48,4 @@ func runDocsService(config *config.Config) {
 
 	log.Printf("[Server] Shut down without issue\n")
 	log.Printf("Stopped documentation service\n")
-
-	if DocsServer.IsRequestingRestart() {
-		runDocsService(config)
-	}
 }
