@@ -29,7 +29,7 @@ func LoadConfig() *Config {
 		DataPath:      getDefaultEnv("DATA_PATH", "/docs/data"),
 		Repository:    getEnv("REPOSITORY"),
 		WebhookSecret: getEnv("WEBHOOK_SECRET"),
-		HomePage:      getDefaultEnv("HOME_PAGE", "README"),
+		HomePage:      getDefaultEnv("HOME_PAGE", "index"),
 	}
 }
 
