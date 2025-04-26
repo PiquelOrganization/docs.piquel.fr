@@ -25,12 +25,9 @@ func main() {
 	source.Update()
 
 	renderer := render.NewRealRenderer(source)
+
 	handler := handlers.NewHandler(config, source, renderer)
-
-	if config.UseGit {
-		router.HandleFunc("/gh-push", handler.GithubPushHandler).Methods(http.MethodPost)
-
-	}
+	router.HandleFunc("/gh-push", handler.GithubPushHandler).Methods(http.MethodPost)
 
 	done := make(chan error)
 	go func() {

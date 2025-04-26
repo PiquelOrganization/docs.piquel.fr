@@ -3,33 +3,33 @@ package config
 import (
 	"log"
 	"os"
-	"strings"
 
 	"github.com/joho/godotenv"
 )
+
+type Config struct {
+	Domain        string
+	Host          string
+	Port          string
+	DataPath      string // where to clone the repository
+	Repository    string // the reposityory to get the pages from
+	WebhookSecret string // the secret to use to validate the webhook
+	HomePage      string // the page to render at /
+}
 
 func LoadConfig() *Config {
 	godotenv.Load()
 
 	log.Printf("[Config] Loading environment variables...")
 
-	useGitString := getDefaultEnv("USE_GIT", "false")
-	useGit := useGitString == "true"
-	repository := ""
-
-	if useGit {
-		repository = getEnv("REPOSITORY")
-	}
-
 	return &Config{
 		Domain:        getEnv("DOMAIN"),
 		Host:          getEnv("HOST"),
 		Port:          getDefaultEnv("PORT", "80"),
 		DataPath:      getDefaultEnv("DATA_PATH", "/docs/data"),
-		UseGit:        useGit,
-		Repository:    repository,
+		Repository:    getEnv("REPOSITORY"),
 		WebhookSecret: getEnv("WEBHOOK_SECRET"),
-		HomePage:      strings.ToLower(getDefaultEnv("HOME_PAGE", "README.md")),
+		HomePage:      getDefaultEnv("HOME_PAGE", "README.md"),
 	}
 }
 
