@@ -26,7 +26,7 @@ type RealRenderer struct {
 
 func (r *RealRenderer) RenderAllFiles(config RenderConfig) (map[string][]byte, error) {
 	files := map[string][]byte{}
-	fileNames, err := r.source.GetAllFiles()
+	fileNames, err := r.source.GetAllMarkdown()
 	if err != nil {
 		return map[string][]byte{}, err
 	}
