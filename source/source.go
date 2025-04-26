@@ -90,7 +90,7 @@ func (s *GitSource) readDir(path, ext string) ([]string, error) {
 }
 
 func (s *GitSource) LoadFile(path string) ([]byte, error) {
-	fileName := fmt.Sprintf("%s/%s", s.dataPath, strings.Trim(path, "/"))
+	fileName := fmt.Sprintf("%s/%s.md", s.dataPath, strings.Trim(path, "/"))
 
 	if _, err := os.Stat(fileName); err != nil {
 		return []byte{}, err
@@ -100,7 +100,7 @@ func (s *GitSource) LoadFile(path string) ([]byte, error) {
 }
 
 func (s *GitSource) LoadInclude(path string) ([]byte, error) {
-	fileName := fmt.Sprintf("%s/.common/includes/%s", s.dataPath, strings.Trim(path, "/"))
+	fileName := fmt.Sprintf("%s/.common/includes/%s.md", s.dataPath, strings.Trim(path, "/"))
 
 	if _, err := os.Stat(fileName); err != nil {
 		return []byte{}, err
