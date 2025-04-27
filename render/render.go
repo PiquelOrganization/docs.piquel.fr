@@ -3,6 +3,8 @@ package render
 import (
 	"bytes"
 	"io"
+	"log"
+	"regexp"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
 	"github.com/gomarkdown/markdown"
@@ -51,10 +53,26 @@ func (r *RealRenderer) RenderFile(path string, config *RenderConfig) ([]byte, er
 		return []byte{}, err
 	}
 
-	// TODO: do the custom rendering
-
-	doc := r.parseMarkdown(file, config)
+	custom, err := r.renderCustom(file, config)
+	if err != nil {
+		return []byte{}, err
+	}
+	doc := r.parseMarkdown(custom, config)
 	return r.renderHTML(doc, config), nil
+}
+
+func (r *RealRenderer) renderCustom(md []byte, config *RenderConfig) ([]byte, error) {
+	regex, err := regexp.Compile(`(?sm)^{ ([a-z]+)(?: \"([a-z]*)\")? }$(?:\n(.*?)\n^{/}$)?`)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	matches := regex.FindAll(md, -1)
+	for _, match := range matches {
+		log.Printf("%s\n", match)
+	}
+
+	return md, nil
 }
 
 func (r *RealRenderer) parseMarkdown(md []byte, config *RenderConfig) ast.Node {
