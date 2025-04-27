@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -78,10 +79,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path string) {
-	renderConfig := render.RenderConfig{}
+	var renderConfig *render.RenderConfig
 
 	root := r.URL.Query().Get("root")
-	renderConfig.RootPath = root
+	if root != "" {
+		renderConfig = &render.RenderConfig{RootPath: fmt.Sprintf("/%s/", strings.Trim(root, "/"))}
+	}
 
 	html, err := h.renderer.RenderFile(path, renderConfig)
 	if err != nil {
