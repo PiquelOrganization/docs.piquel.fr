@@ -76,8 +76,9 @@ func (r *RealRenderer) renderHTML(doc ast.Node, config *RenderConfig) []byte {
 
 func (r *RealRenderer) renderHook(config *RenderConfig) html.RenderNodeFunc {
 	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
-		if link, ok := node.(*ast.Link); ok {
-			r.renderLink(w, link, entering, config)
+		switch node := node.(type) {
+		case *ast.Link:
+			r.renderLink(w, node, entering, config)
 			return ast.GoToNext, false
 		}
 
