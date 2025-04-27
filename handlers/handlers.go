@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
@@ -83,6 +85,10 @@ func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path st
 
 	html, err := h.renderer.RenderFile(path, renderConfig)
 	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			http.NotFound(w, r)
+			return
+		}
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		panic(err)
 	}
