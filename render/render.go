@@ -58,16 +58,12 @@ func (r *RealRenderer) RenderFile(path string, config *RenderConfig) ([]byte, er
 }
 
 func (r *RealRenderer) parseMarkdown(md []byte, config *RenderConfig) ast.Node {
-	// TODO: modify the parser to use RenderConfig
-
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
 	p := parser.NewWithExtensions(extensions)
 	return p.Parse(md)
 }
 
 func (r *RealRenderer) renderHTML(doc ast.Node, config *RenderConfig) []byte {
-	// TODO: modify the renderer to use RenderConfig
-
 	htmlFlags := html.CommonFlags
 	options := html.RendererOptions{
 		Flags:          htmlFlags,
