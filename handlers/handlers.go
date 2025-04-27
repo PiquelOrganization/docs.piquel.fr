@@ -79,12 +79,10 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path string) {
-	var renderConfig *render.RenderConfig
+	renderConfig := &render.RenderConfig{}
 
 	root := r.URL.Query().Get("root")
-	if root != "" {
-		renderConfig = &render.RenderConfig{RootPath: fmt.Sprintf("/%s/", strings.Trim(root, "/"))}
-	}
+	renderConfig.RootPath = fmt.Sprintf("/%s/", strings.Trim(root, "/"))
 
 	html, err := h.renderer.RenderFile(path, renderConfig)
 	if err != nil {

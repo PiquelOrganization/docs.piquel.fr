@@ -75,10 +75,6 @@ func (r *RealRenderer) renderHTML(doc ast.Node, config *RenderConfig) []byte {
 }
 
 func (r *RealRenderer) renderHook(config *RenderConfig) html.RenderNodeFunc {
-	if config == nil {
-		return func(io.Writer, ast.Node, bool) (ast.WalkStatus, bool) { return ast.GoToNext, false }
-	}
-
 	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 		if link, ok := node.(*ast.Link); ok {
 			r.renderLink(w, link, entering, config)
@@ -97,6 +93,8 @@ func (r *RealRenderer) renderLink(w io.Writer, link *ast.Link, entering bool, co
 	if bytes.HasPrefix(link.Destination, []byte("http")) {
 		link.AdditionalAttributes = append(link.AdditionalAttributes, "target=\"_blank\"")
 	} else {
-		link.Destination = append([]byte(config.RootPath), link.Destination...)
+		if config.RootPath != "" {
+			link.Destination = append([]byte(config.RootPath), link.Destination...)
+		}
 	}
 }
