@@ -6,4 +6,6 @@ My own homemade, self-hosted gitbook alternative
 
 - Verify Github signature in webhook
 - Custom rendering
+  - Use parser hook to match custom render
+  - Move Link formatting to ast walk func
 - Add styles
