@@ -62,15 +62,17 @@ func (r *RealRenderer) RenderFile(path string, config *RenderConfig) ([]byte, er
 }
 
 func (r *RealRenderer) renderCustom(md []byte, config *RenderConfig) ([]byte, error) {
-	regex, err := regexp.Compile(`(?sm)^{ ([a-z]+)(?: \"([a-z]*)\")? }$(?:\n(.*?)\n^{/}$)?`)
+	multiline, err := regexp.Compile(`(?m)^{ *([a-z]+)(?: *\"(.*)\")? *}\n?((?:.|\n)*?)\n?{/}$`)
 	if err != nil {
 		return []byte{}, err
 	}
+	log.Printf("%s\n", multiline.FindAll(md, -1))
 
-	matches := regex.FindAll(md, -1)
-	for _, match := range matches {
-		log.Printf("%s\n", match)
+	singleline, err := regexp.Compile(`(?m)^{ *([a-z]+)(?: *\"(.*)\")? */}$`)
+	if err != nil {
+		return []byte{}, err
 	}
+	log.Printf("%s\n", singleline.FindAll(md, -1))
 
 	return md, nil
 }
