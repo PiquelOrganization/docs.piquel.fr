@@ -19,7 +19,9 @@ type Renderer interface {
 }
 
 type RenderConfig struct {
-	RootPath string // this will be prepended to any local URLs in the markdown
+	RootPath    string // this will be prepended to any local URLs in the markdown
+	UseTailwind bool   // wether to use tailwind classes and settings (notably restore the proper size of titles)
+    FullPage bool // wether to render a full page (add <!DOCTYPE html> to the top of the page
 }
 
 func NewRealRenderer(source source.Source) Renderer {
@@ -85,6 +87,11 @@ func (r *RealRenderer) parseMarkdown(md []byte, config *RenderConfig) ast.Node {
 
 func (r *RealRenderer) renderHTML(doc ast.Node, config *RenderConfig) []byte {
 	htmlFlags := html.CommonFlags
+    
+    if config.FullPage {
+        htmlFlags = htmlFlags | html.CompletePage
+    }
+
 	options := html.RendererOptions{
 		Flags:          htmlFlags,
 		RenderNodeHook: r.renderHook(config),
