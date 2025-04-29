@@ -83,6 +83,7 @@ func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path st
 
 	root := r.URL.Query().Get("root")
 	renderConfig.RootPath = fmt.Sprintf("/%s/", strings.Trim(root, "/"))
+	_, renderConfig.UseTailwind = r.URL.Query()["tailwind"]
 
 	html, err := h.renderer.RenderFile(path, renderConfig)
 	if err != nil {
