@@ -2,7 +2,9 @@ package render
 
 import (
 	"bytes"
+	"slices"
 
+	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 	"github.com/gomarkdown/markdown/ast"
 )
 
@@ -27,7 +29,7 @@ func (r *RealRenderer) fixupLink(link *ast.Link, entering bool, config *RenderCo
 		link.AdditionalAttributes = append(link.AdditionalAttributes, "target=\"_blank\"")
 	} else {
 		if config.RootPath != "" {
-			link.Destination = append([]byte(config.RootPath), link.Destination...)
+			link.Destination = slices.Concat([]byte(config.RootPath), utils.FormatPathSlashes(link.Destination))
 		}
 	}
 }

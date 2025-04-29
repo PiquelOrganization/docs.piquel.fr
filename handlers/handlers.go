@@ -10,6 +10,7 @@ import (
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
 	"github.com/PiquelOrganization/docs.piquel.fr/render"
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
+	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 )
 
 type Handler struct {
@@ -82,7 +83,7 @@ func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path st
 	renderConfig := &render.RenderConfig{}
 
 	root := r.URL.Query().Get("root")
-	renderConfig.RootPath = fmt.Sprintf("/%s/", strings.Trim(root, "/"))
+	renderConfig.RootPath = utils.FormatPathSlashesString(root)
 	_, renderConfig.UseTailwind = r.URL.Query()["tailwind"]
 
 	html, err := h.renderer.RenderFile(path, renderConfig)
