@@ -101,6 +101,6 @@ func (r *RealRenderer) addStyles(html []byte, config *RenderConfig) []byte {
 		return html
 	}
 
-	styles = slices.Concat([]byte("<style>\n"), styles, []byte("</styles>\n"))
+	styles = slices.Concat([]byte("<style>\n"), styles, []byte("</style>\n"))
 	return slices.Concat(html, styles)
 }
