@@ -12,8 +12,4 @@ My own homemade, self-hosted gitbook alternative
 - Custom rendering
   - Use parser hook to match custom render
 
-- AST Walker
-  - Link formatting
-  - If tailwind, add classes for headers (save as constant
-
 - Syntax highlighter for code [see docs](https://github.com/gomarkdown/markdown/blob/master/examples/code_hightlight.go)

@@ -1,10 +1,7 @@
 package render
 
 import (
-	"bytes"
-	"io"
-	"log"
-	"regexp"
+	"slices"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
 	"github.com/gomarkdown/markdown"
@@ -12,6 +9,15 @@ import (
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 )
+
+const tailwindBase = `
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.17em; }
+    h4 { font-size: 1em; }
+    h5 { font-size: 0.83em; }
+    h6 { font-size: 0.67em; }
+`
 
 type Renderer interface {
 	RenderAllFiles(config *RenderConfig) (map[string][]byte, error)
@@ -21,15 +27,15 @@ type Renderer interface {
 type RenderConfig struct {
 	RootPath    string // this will be prepended to any local URLs in the markdown
 	UseTailwind bool   // wether to use tailwind classes and settings (notably restore the proper size of titles)
-    FullPage bool // wether to render a full page (add <!DOCTYPE html> to the top of the page
-}
-
-func NewRealRenderer(source source.Source) Renderer {
-	return &RealRenderer{source: source}
+	FullPage    bool   // wether to render a full page (add <!DOCTYPE html> to the top of the page
 }
 
 type RealRenderer struct {
 	source source.Source
+}
+
+func NewRealRenderer(source source.Source) Renderer {
+	return &RealRenderer{source: source}
 }
 
 func (r *RealRenderer) RenderAllFiles(config *RenderConfig) (map[string][]byte, error) {
@@ -60,23 +66,9 @@ func (r *RealRenderer) RenderFile(path string, config *RenderConfig) ([]byte, er
 		return []byte{}, err
 	}
 	doc := r.parseMarkdown(custom, config)
-	return r.renderHTML(doc, config), nil
-}
-
-func (r *RealRenderer) renderCustom(md []byte, config *RenderConfig) ([]byte, error) {
-	multiline, err := regexp.Compile(`(?m)^{ *([a-z]+)(?: *\"(.*)\")? *}\n?((?:.|\n)*?)\n?{/}$`)
-	if err != nil {
-		return []byte{}, err
-	}
-	log.Printf("%s\n", multiline.FindAll(md, -1))
-
-	singleline, err := regexp.Compile(`(?m)^{ *([a-z]+)(?: *\"(.*)\")? */}$`)
-	if err != nil {
-		return []byte{}, err
-	}
-	log.Printf("%s\n", singleline.FindAll(md, -1))
-
-	return md, nil
+	doc = r.fixupAST(doc, config)
+	html := r.renderHTML(doc, config)
+	return r.addStyles(html, config), nil
 }
 
 func (r *RealRenderer) parseMarkdown(md []byte, config *RenderConfig) ast.Node {
@@ -87,42 +79,28 @@ func (r *RealRenderer) parseMarkdown(md []byte, config *RenderConfig) ast.Node {
 
 func (r *RealRenderer) renderHTML(doc ast.Node, config *RenderConfig) []byte {
 	htmlFlags := html.CommonFlags
-    
-    if config.FullPage {
-        htmlFlags = htmlFlags | html.CompletePage
-    }
 
-	options := html.RendererOptions{
-		Flags:          htmlFlags,
-		RenderNodeHook: r.renderHook(config),
+	if config.FullPage {
+		htmlFlags = htmlFlags | html.CompletePage
 	}
+
+	options := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(options)
 
 	return markdown.Render(doc, renderer)
 }
 
-func (r *RealRenderer) renderHook(config *RenderConfig) html.RenderNodeFunc {
-	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
-		switch node := node.(type) {
-		case *ast.Link:
-			r.renderLink(w, node, entering, config)
-			return ast.GoToNext, false
-		}
+func (r *RealRenderer) addStyles(html []byte, config *RenderConfig) []byte {
+	var styles []byte
 
-		return ast.GoToNext, false
-	}
-}
-
-func (r *RealRenderer) renderLink(w io.Writer, link *ast.Link, entering bool, config *RenderConfig) {
-	if !entering {
-		return
+	if config.UseTailwind {
+		styles = append(styles, []byte(tailwindBase)...)
 	}
 
-	if bytes.HasPrefix(link.Destination, []byte("http")) {
-		link.AdditionalAttributes = append(link.AdditionalAttributes, "target=\"_blank\"")
-	} else {
-		if config.RootPath != "" {
-			link.Destination = append([]byte(config.RootPath), link.Destination...)
-		}
+	if styles == nil {
+		return html
 	}
+
+	styles = slices.Concat([]byte("<style>\n"), styles, []byte("</styles>\n"))
+	return slices.Concat(html, styles)
 }
