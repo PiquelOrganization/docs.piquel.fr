@@ -28,8 +28,6 @@ func (r *RealRenderer) fixupLink(link *ast.Link, entering bool, config *RenderCo
 	if bytes.HasPrefix(link.Destination, []byte("http")) {
 		link.AdditionalAttributes = append(link.AdditionalAttributes, "target=\"_blank\"")
 	} else {
-		if config.RootPath != "" {
-			link.Destination = slices.Concat([]byte(config.RootPath), utils.FormatLocalPath(link.Destination))
-		}
+		link.Destination = slices.Concat([]byte(config.RootPath), utils.FormatLocalPath(link.Destination, ".md"))
 	}
 }

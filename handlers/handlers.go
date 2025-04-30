@@ -82,10 +82,12 @@ func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path st
 	renderConfig := &render.RenderConfig{}
 
 	root := r.URL.Query().Get("root")
-	renderConfig.RootPath = utils.FormatLocalPathString(root)
+	if root != "" {
+		renderConfig.RootPath = utils.FormatLocalPathString(root, "")
+	}
 	_, renderConfig.UseTailwind = r.URL.Query()["tailwind"]
 
-	html, err := h.renderer.RenderFile(path, renderConfig)
+	html, err := h.renderer.RenderFile(utils.FormatLocalPathString(path, ".md"), renderConfig)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			http.NotFound(w, r)

@@ -80,8 +80,7 @@ func (s *GitSource) readDir(path, ext string) ([]string, error) {
 		}
 
 		name = strings.Replace(newPath, s.dataPath, "", 1)
-		name = strings.Trim(name, "/")
-		name = strings.ReplaceAll(name, ext, "")
+		name = utils.FormatLocalPathString(name, ext)
 
 		files = append(files, name)
 	}
@@ -90,7 +89,7 @@ func (s *GitSource) readDir(path, ext string) ([]string, error) {
 }
 
 func (s *GitSource) LoadFile(path string) ([]byte, error) {
-	fileName := fmt.Sprintf("%s/%s.md", s.dataPath, strings.Trim(path, "/"))
+	fileName := fmt.Sprintf("%s%s.md", s.dataPath, strings.Trim(path, "/"))
 
 	if _, err := os.Stat(fileName); err != nil {
 		return []byte{}, err

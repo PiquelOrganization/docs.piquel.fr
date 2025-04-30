@@ -16,14 +16,14 @@ func IsDir(path string) bool {
 	}
 }
 
-func FormatLocalPathString(path string) string {
+func FormatLocalPathString(path, ext string) string {
 	trim := strings.Trim(path, "/")
-	trim = strings.TrimSuffix(trim, ".md")
+	trim = strings.TrimSuffix(trim, ext)
 	return fmt.Sprintf("/%s", trim)
 }
 
-func FormatLocalPath(path []byte) []byte {
+func FormatLocalPath(path []byte, ext string) []byte {
 	trim := bytes.Trim(path, "/")
-	trim = bytes.TrimSuffix(trim, []byte(".md"))
+	trim = bytes.TrimSuffix(trim, []byte(ext))
 	return slices.Concat([]byte("/"), trim)
 }

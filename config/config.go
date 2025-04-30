@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 	"github.com/joho/godotenv"
 )
 
@@ -26,7 +27,7 @@ func LoadConfig() *Config {
 		Domain:        getEnv("DOMAIN"),
 		Host:          getEnv("HOST"),
 		Port:          getDefaultEnv("PORT", "80"),
-		DataPath:      getDefaultEnv("DATA_PATH", "/docs/data"),
+		DataPath:      utils.FormatLocalPathString(getDefaultEnv("DATA_PATH", "/docs/data"), ""),
 		Repository:    getEnv("REPOSITORY"),
 		WebhookSecret: getEnv("WEBHOOK_SECRET"),
 		HomePage:      getDefaultEnv("HOME_PAGE", "index"),
