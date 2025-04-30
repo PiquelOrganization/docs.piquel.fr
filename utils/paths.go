@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 )
 
@@ -15,18 +16,14 @@ func IsDir(path string) bool {
 	}
 }
 
-func FormatPathSlashesString(path string) string {
+func FormatLocalPathString(path string) string {
 	trim := strings.Trim(path, "/")
-	if strings.HasPrefix(trim, "http") {
-		return trim
-	}
+	trim = strings.TrimSuffix(trim, ".md")
 	return fmt.Sprintf("/%s", trim)
 }
 
-func FormatPathSlashes(path []byte) []byte {
+func FormatLocalPath(path []byte) []byte {
 	trim := bytes.Trim(path, "/")
-	if bytes.HasPrefix(trim, []byte("http")) {
-		return trim
-	}
-	return append([]byte("/"), trim...)
+	trim = bytes.TrimSuffix(trim, []byte(".md"))
+	return slices.Concat([]byte("/"), trim)
 }
