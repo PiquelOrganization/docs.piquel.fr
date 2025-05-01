@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"slices"
 
+	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
