@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Deploy
 on:
   push:
     branches:
@@ -12,6 +12,7 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    name: Build Container and Push to Registry
     permissions:
       contents: read
       packages: write
@@ -42,6 +43,7 @@ jobs:
     
   deploy:
     runs-on: ubuntu-latest
+    name: Deploy to Production
     needs:
       - build-and-push
     steps:
