@@ -1,16 +1,13 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: "[CHANGE] "
-labels: enhancement
+title: "[FEAT] "
+labels: feature
 assignees: ''
 
 ---
 
-**What feature does the change concern?**
-The feature that needs to be changed.
-
-**What change would you like to make?**
-A clear and concise description of what you want to change.
+**What feature would you like to add?**
+The feature that you would like to add.
 
 **Would you be willing to make the change yourself?**
