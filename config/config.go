@@ -30,7 +30,7 @@ func LoadConfig() *Config {
 		DataPath:      utils.FormatLocalPathString(getDefaultEnv("DATA_PATH", "/docs/data"), ""),
 		Repository:    getEnv("REPOSITORY"),
 		WebhookSecret: getEnv("WEBHOOK_SECRET"),
-		HomePage:      getDefaultEnv("HOME_PAGE", "index"),
+		HomePage:      utils.FormatLocalPathString(getDefaultEnv("HOME_PAGE", "index.md"), ".md"),
 	}
 }
 
