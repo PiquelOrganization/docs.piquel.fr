@@ -1,6 +1,10 @@
 package render
 
-import "github.com/PiquelOrganization/docs.piquel.fr/source"
+import (
+	"regexp"
+
+	"github.com/PiquelOrganization/docs.piquel.fr/source"
+)
 
 type Renderer interface {
 	RenderAllFiles(config *RenderConfig) (map[string][]byte, error)
@@ -15,10 +19,27 @@ type RenderConfig struct {
 
 type RealRenderer struct {
 	source source.Source
+
+	singleline *regexp.Regexp
+	multiline  *regexp.Regexp
 }
 
-func NewRealRenderer(source source.Source) Renderer {
-	return &RealRenderer{source: source}
+func NewRealRenderer(source source.Source) (Renderer, error) {
+	singleline, err := regexp.Compile(`(?m)^{ *([a-z]+)(?: *\"(.*)\")? */}$`)
+	if err != nil {
+		return nil, err
+	}
+
+	multiline, err := regexp.Compile(`(?m)^{ *([a-z]+)(?: *\"(.*)\")? *}\n?((?:.|\n)*?)\n?{/}$`)
+	if err != nil {
+		return nil, err
+	}
+
+	return &RealRenderer{
+		source:     source,
+		singleline: singleline,
+		multiline:  multiline,
+	}, nil
 }
 
 func (r *RealRenderer) RenderAllFiles(config *RenderConfig) (map[string][]byte, error) {

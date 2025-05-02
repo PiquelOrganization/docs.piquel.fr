@@ -24,7 +24,10 @@ func main() {
 	source := source.NewGitSource(config)
 	source.Update()
 
-	renderer := render.NewRealRenderer(source)
+	renderer, err := render.NewRealRenderer(source)
+	if err != nil {
+		panic(err)
+	}
 
 	var staticHandler http.Handler
 	if assetsPath := source.GetAssetsPath(); assetsPath != "" {
