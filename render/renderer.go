@@ -65,10 +65,7 @@ func (r *RealRenderer) RenderFile(path string, config *RenderConfig) ([]byte, er
 		return []byte{}, err
 	}
 
-	custom, err := r.renderCustom(file, config)
-	if err != nil {
-		return []byte{}, err
-	}
+	custom := r.renderCustom(file, config)
 	doc := r.parseMarkdown(custom, config)
 	doc = r.fixupAST(doc, config)
 	html := r.renderHTML(doc, config)
