@@ -45,7 +45,7 @@ func main() {
 		done <- err
 	}()
 
-	err := <-done
+	err = <-done
 	if err != http.ErrServerClosed {
 		panic(err)
 	}
