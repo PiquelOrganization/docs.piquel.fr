@@ -13,7 +13,7 @@ import (
 type Source interface {
 	Update() error
 	GetAllMarkdown() ([]string, error)
-	LoadFile(path string) ([]byte, error)
+	LoadRouteFile(route string) ([]byte, error)
 	LoadInclude(path string) ([]byte, error)
 	GetAssetsPath() string
 }
@@ -88,8 +88,8 @@ func (s *GitSource) readDir(path, ext string) ([]string, error) {
 	return files, nil
 }
 
-func (s *GitSource) LoadFile(path string) ([]byte, error) {
-	fileName := fmt.Sprintf("%s%s.md", s.dataPath, strings.Trim(path, "/"))
+func (s *GitSource) LoadRouteFile(route string) ([]byte, error) {
+	fileName := fmt.Sprintf("%s%s.md", s.dataPath, route)
 
 	if _, err := os.Stat(fileName); err != nil {
 		return []byte{}, err
