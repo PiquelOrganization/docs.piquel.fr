@@ -20,13 +20,13 @@ func (r *RealRenderer) renderSingleline(md []byte, config *RenderConfig) []byte 
 	submatches := r.singleline.FindSubmatch(match)
 	html := r.renderSingleHTML(submatches[0], submatches[1], config)
 
-	bytes.Replace(md, match, html, 1)
+	md = bytes.Replace(md, match, html, 1)
 	return r.renderSingleline(md, config)
 }
 
 func (r *RealRenderer) renderSingleHTML(tag, param []byte, config *RenderConfig) []byte {
-    log.Printf("tag: %s\nparam: %s\n", tag, param)
-	return []byte{}
+	log.Printf("tag: %s\nparam: %s\n", tag, param)
+	return []byte("Jesus Christ")
 }
 
 func (r *RealRenderer) renderMultiline(md []byte, config *RenderConfig) []byte {
@@ -43,11 +43,11 @@ func (r *RealRenderer) renderMultiline(md []byte, config *RenderConfig) []byte {
 		html = r.renderMultiHTML(submatches[0], submatches[1], submatches[2], config)
 	}
 
-	bytes.Replace(md, match, html, 1)
+	md = bytes.Replace(md, match, html, 1)
 	return r.renderMultiline(md, config)
 }
 
 func (r *RealRenderer) renderMultiHTML(tag, param, body []byte, config *RenderConfig) []byte {
-    log.Printf("tag: %s\nparam: %s\nbody: %s\n", tag, param, body)
-	return []byte{}
+	log.Printf("\ntag: %s\nparam: %s\nbody: %s\n", tag, param, body)
+	return []byte("Jesus Christ")
 }
