@@ -60,7 +60,7 @@ func (r *RealRenderer) RenderAllFiles(config *RenderConfig) (map[string][]byte, 
 }
 
 func (r *RealRenderer) RenderFile(path string, config *RenderConfig) ([]byte, error) {
-	file, err := r.source.LoadFile(path)
+	file, err := r.source.LoadRouteFile(path)
 	if err != nil {
 		return []byte{}, err
 	}

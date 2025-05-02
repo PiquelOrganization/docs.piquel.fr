@@ -49,7 +49,7 @@ func (h *Handler) GithubPushHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	path := strings.Trim(r.URL.Path, "/")
+	path := utils.FormatLocalPathString(r.URL.Path, ".md")
 
 	if path == "gh-push" && r.Method == http.MethodPost {
 		h.GithubPushHandler(w, r)
@@ -70,7 +70,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if path == "" {
+	if path == "/" {
 		h.handleDocsPath(w, r, h.homePage)
 		return
 	}
@@ -87,7 +87,7 @@ func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path st
 	}
 	_, renderConfig.UseTailwind = r.URL.Query()["tailwind"]
 
-	html, err := h.renderer.RenderFile(utils.FormatLocalPathString(path, ".md"), renderConfig)
+	html, err := h.renderer.RenderFile(path, renderConfig)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			http.NotFound(w, r)
