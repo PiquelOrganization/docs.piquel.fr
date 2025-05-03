@@ -4,6 +4,9 @@ on:
     branches:
       - "main"
     paths-ignore:
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/pull_request_template.md'
+      - '.github/release.yml'
       - '.gitignore'
       - '.air.toml'
       - 'README.md'
