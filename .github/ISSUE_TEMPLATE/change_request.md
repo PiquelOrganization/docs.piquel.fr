@@ -2,8 +2,9 @@
 name: Change Request
 about: Suggest a change to an existing feature
 title: "[CHANGE] "
-labels: feature
+labels: enhancement
 assignees: ''
+
 ---
 
 **What feature would you like to make a change to?**
