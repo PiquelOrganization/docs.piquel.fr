@@ -1,6 +1,9 @@
 package render
 
-import "bytes"
+import (
+	"bytes"
+	"fmt"
+)
 
 func (r *RealRenderer) renderCustom(md []byte, config *RenderConfig) ([]byte, error) {
 	var err error
@@ -22,16 +25,18 @@ func (r *RealRenderer) renderSingleline(md []byte, config *RenderConfig) ([]byte
 		return md, nil
 	}
 
-	total, tag, param := match[0], string(match[1]), string(match[2])
+	total, tag, param := match[0], match[1], match[2]
 
 	var newMarkdown bytes.Buffer
-	switch tag {
+	switch string(tag) {
 	case "include":
-		include, err := r.source.LoadInclude(param)
+		include, err := r.source.LoadInclude(string(param))
 		if err != nil {
 			return []byte{}, err
 		}
 		newMarkdown.Write(include)
+	default:
+		newMarkdown.Write(fmt.Appendf(nil, "Tag %s does not exist\n", tag))
 	}
 
 	md = bytes.Replace(md, total, newMarkdown.Bytes(), 1)
@@ -44,12 +49,15 @@ func (r *RealRenderer) renderMultiline(md []byte, config *RenderConfig) ([]byte,
 		return md, nil
 	}
 
-	total, tag, body := match[0], string(match[1]), match[2]
+	total, tag, body := match[0], match[1], match[2]
 
 	var newMarkdown bytes.Buffer
-	switch tag {
+	switch string(tag) {
 	case "warning":
-        newMarkdown.Write([]byte("Warning:\n"))
+		newMarkdown.Write([]byte("Warning:\n"))
+		newMarkdown.Write(body)
+	default:
+		newMarkdown.Write(fmt.Appendf(nil, "Tag %s does not exist\n", tag))
 		newMarkdown.Write(body)
 	}
 
