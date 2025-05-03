@@ -9,11 +9,6 @@ import (
 )
 
 func (r *RealRenderer) renderCodeBlock(w io.Writer, codeBlock *ast.CodeBlock, entering bool) error {
-	_, err := io.WriteString(w, "\n<pre><code>\n")
-	if err != nil {
-		return err
-	}
-
 	lang := string(codeBlock.Info)
 	source := string(codeBlock.Literal)
 	l := lexers.Get(lang)
@@ -30,11 +25,5 @@ func (r *RealRenderer) renderCodeBlock(w io.Writer, codeBlock *ast.CodeBlock, en
 		return err
 	}
 
-	err = r.htmlFormatter.Format(w, r.highlightStyle, iterator)
-	if err != nil {
-		return err
-	}
-
-	_, err = io.WriteString(w, "\n</pre></code>\n")
-	return err
+	return r.htmlFormatter.Format(w, r.highlightStyle, iterator)
 }
