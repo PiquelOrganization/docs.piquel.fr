@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 )
@@ -15,13 +16,13 @@ func IsDir(path string) bool {
 	}
 }
 
-func ValidatePath(path string) bool {
+func ValidatePath(path string) error {
 	if strings.Contains(path, "..") {
-		return false
+		return NewError(fmt.Sprintf("Path \"%s\" is not valid as it contains \"..\"", path), http.StatusBadRequest)
 	} else if strings.Contains(path, "~") {
-		return false
+		return NewError(fmt.Sprintf("Path \"%s\" is not valid as it contains \"~\"", path), http.StatusBadRequest)
 	}
-	return true
+	return nil
 }
 
 func FormatLocalPathString(path, ext string) string {
