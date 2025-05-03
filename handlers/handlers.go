@@ -90,10 +90,10 @@ func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path st
 
 	html, err := h.renderer.RenderFile(path, renderConfig)
 	if err != nil {
-        if internalError, ok := err.(utils.Error); ok {
-            internalError.Handle(w)
-            return
-        }
+		if internalError, ok := err.(utils.Error); ok {
+			internalError.Handle(w)
+			return
+		}
 
 		if errors.Is(err, os.ErrNotExist) {
 			http.NotFound(w, r)
