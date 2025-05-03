@@ -31,7 +31,11 @@ func (r *RealRenderer) renderCodeBlock(w io.Writer, codeBlock *ast.CodeBlock, en
 }
 
 func (r *RealRenderer) getHighlightStyle(config *RenderConfig) error {
-	styleName := "tokyonight"
+	styleName := config.StyleName
+	if styleName == "" {
+		styleName = "tokyonight"
+	}
+
 	config.highlightStyle = styles.Get(styleName)
 	if config.highlightStyle == nil {
 		return fmt.Errorf("Couldn't find style %s", styleName)
