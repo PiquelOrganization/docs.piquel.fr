@@ -25,9 +25,10 @@ type Envs struct {
 
 type DocsConfig struct {
 	sync.Mutex
-	HomePage       string `json:"home_page"`       // the page to render at /
-	HighlightStyle string `json:"highlight_style"` // the style used to highlight code
-	Root           string `json:"root"`            // the root used to return
+	HomePage       string `json,yaml:"home_page"`       // the page to render at /
+	HighlightStyle string `json,yaml:"highlight_style"` // the style used to highlight code
+	Root           string `json,yaml:"root"`            // the root used to return
+	UseTailwind    bool   `json,yaml:"use_tailwind"`    // wether to add classes to reverse tailwind config
 }
 
 func LoadConfig() *Config {
