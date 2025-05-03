@@ -30,7 +30,7 @@ func NewRealRenderer(source source.Source) (Renderer, error) {
 		return nil, err
 	}
 
-	multiline, err := regexp.Compile(`(?m)^{ *([a-z]+)(?: *\"(.*)\")? *}\n?((?:.|\n)*?)\n?{/}$`)
+	multiline, err := regexp.Compile(`(?m)^{ *([a-z]+) *}\n?((?:.|\n)*?)\n?{/}$`)
 	if err != nil {
 		return nil, err
 	}

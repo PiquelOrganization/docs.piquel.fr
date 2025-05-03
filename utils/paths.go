@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"slices"
 	"strings"
 )
 
@@ -34,5 +33,5 @@ func FormatLocalPathString(path, ext string) string {
 func FormatLocalPath(path []byte, ext string) []byte {
 	trim := bytes.Trim(path, "/")
 	trim = bytes.TrimSuffix(trim, []byte(ext))
-	return slices.Concat([]byte("/"), trim)
+	return fmt.Appendf(nil, "/%s", trim)
 }
