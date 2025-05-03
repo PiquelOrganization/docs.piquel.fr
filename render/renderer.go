@@ -7,7 +7,6 @@ import (
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/formatters/html"
-	"github.com/alecthomas/chroma/v2/styles"
 )
 
 type Renderer interface {
