@@ -86,6 +86,7 @@ func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path st
 		renderConfig.RootPath = utils.FormatLocalPathString(root, "")
 	}
 	_, renderConfig.UseTailwind = r.URL.Query()["tailwind"]
+	renderConfig.StyleName = r.URL.Query().Get("styleName")
 
 	html, err := h.renderer.RenderFile(path, renderConfig)
 	if err != nil {
