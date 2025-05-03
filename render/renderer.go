@@ -1,9 +1,13 @@
 package render
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
+	"github.com/alecthomas/chroma/v2"
+	"github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/alecthomas/chroma/v2/styles"
 )
 
 type Renderer interface {
@@ -20,8 +24,10 @@ type RenderConfig struct {
 type RealRenderer struct {
 	source source.Source
 
-	singleline *regexp.Regexp
-	multiline  *regexp.Regexp
+	singleline     *regexp.Regexp
+	multiline      *regexp.Regexp
+	htmlFormatter  *html.Formatter
+	highlightStyle *chroma.Style
 }
 
 func NewRealRenderer(source source.Source) (Renderer, error) {
@@ -35,11 +41,18 @@ func NewRealRenderer(source source.Source) (Renderer, error) {
 		return nil, err
 	}
 
-	return &RealRenderer{
-		source:     source,
-		singleline: singleline,
-		multiline:  multiline,
-	}, nil
+	htmlFormatter := html.New()
+	if htmlFormatter == nil {
+		return nil, fmt.Errorf("Error creating html formatter")
+	}
+
+	styleName := "tokyonight"
+	highlightStyle := styles.Get(styleName)
+	if highlightStyle == nil {
+		return nil, fmt.Errorf("Couldn't find style %s", styleName)
+	}
+
+	return &RealRenderer{source, singleline, multiline, htmlFormatter, highlightStyle}, nil
 }
 
 func (r *RealRenderer) RenderAllFiles(config *RenderConfig) (map[string][]byte, error) {
