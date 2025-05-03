@@ -1,9 +1,12 @@
 package render
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
+	"github.com/alecthomas/chroma/v2"
+	"github.com/alecthomas/chroma/v2/formatters/html"
 )
 
 type Renderer interface {
@@ -15,13 +18,17 @@ type RenderConfig struct {
 	RootPath    string // this will be prepended to any local URLs in the markdown
 	UseTailwind bool   // wether to use tailwind classes and settings (notably restore the proper size of titles)
 	FullPage    bool   // wether to render a full page (add <!DOCTYPE html> to the top of the page
+	StyleName   string // The name of the style used to format code blocks
+
+	highlightStyle *chroma.Style // the style used to format code blocks
 }
 
 type RealRenderer struct {
 	source source.Source
 
-	singleline *regexp.Regexp
-	multiline  *regexp.Regexp
+	singleline    *regexp.Regexp
+	multiline     *regexp.Regexp
+	htmlFormatter *html.Formatter
 }
 
 func NewRealRenderer(source source.Source) (Renderer, error) {
@@ -35,14 +42,19 @@ func NewRealRenderer(source source.Source) (Renderer, error) {
 		return nil, err
 	}
 
-	return &RealRenderer{
-		source:     source,
-		singleline: singleline,
-		multiline:  multiline,
-	}, nil
+	htmlFormatter := html.New()
+	if htmlFormatter == nil {
+		return nil, fmt.Errorf("Error creating html formatter")
+	}
+
+	return &RealRenderer{source, singleline, multiline, htmlFormatter}, nil
 }
 
 func (r *RealRenderer) RenderAllFiles(config *RenderConfig) (map[string][]byte, error) {
+	if err := r.getHighlightStyle(config); err != nil {
+		return nil, err
+	}
+
 	files := map[string][]byte{}
 	fileNames, err := r.source.GetAllMarkdown()
 	if err != nil {
@@ -60,14 +72,21 @@ func (r *RealRenderer) RenderAllFiles(config *RenderConfig) (map[string][]byte, 
 }
 
 func (r *RealRenderer) RenderFile(path string, config *RenderConfig) ([]byte, error) {
+	// just in case already created in RenderAllFiles
+	if config.highlightStyle == nil {
+		if err := r.getHighlightStyle(config); err != nil {
+			return nil, err
+		}
+	}
+
 	file, err := r.source.LoadRouteFile(path)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 
 	custom, err := r.renderCustom(file, config)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 	doc := r.parseMarkdown(custom, config)
 	doc = r.fixupAST(doc, config)

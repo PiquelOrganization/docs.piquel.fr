@@ -2,6 +2,7 @@ package render
 
 import (
 	"bytes"
+	"io"
 	"slices"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/utils"
@@ -33,10 +34,24 @@ func (r *RealRenderer) renderHTML(doc ast.Node, config *RenderConfig) []byte {
 		htmlFlags = htmlFlags | html.CompletePage
 	}
 
-	options := html.RendererOptions{Flags: htmlFlags}
+	options := html.RendererOptions{
+		Flags:          htmlFlags,
+		RenderNodeHook: r.renderHook(config),
+	}
 	renderer := html.NewRenderer(options)
 
 	return markdown.Render(doc, renderer)
+}
+
+func (r *RealRenderer) renderHook(config *RenderConfig) html.RenderNodeFunc {
+	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
+		switch node := node.(type) {
+		case *ast.CodeBlock:
+			r.renderCodeBlock(w, node, entering, config)
+			return ast.GoToNext, true
+		}
+		return ast.GoToNext, false
+	}
 }
 
 func (r *RealRenderer) addStyles(html []byte, config *RenderConfig) []byte {

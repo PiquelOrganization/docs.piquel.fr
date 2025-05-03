@@ -3,6 +3,7 @@ package render
 import (
 	"bytes"
 	"fmt"
+	"io"
 )
 
 func (r *RealRenderer) renderCustom(md []byte, config *RenderConfig) ([]byte, error) {
@@ -36,7 +37,7 @@ func (r *RealRenderer) renderSingleline(md []byte, config *RenderConfig) ([]byte
 		}
 		newMarkdown.Write(include)
 	default:
-		newMarkdown.Write(fmt.Appendf(nil, "Tag %s does not exist\n", tag))
+		io.WriteString(&newMarkdown, fmt.Sprintf("Tag %s does not exist\n", tag))
 	}
 
 	md = bytes.Replace(md, total, newMarkdown.Bytes(), 1)
@@ -54,10 +55,10 @@ func (r *RealRenderer) renderMultiline(md []byte, config *RenderConfig) ([]byte,
 	var newMarkdown bytes.Buffer
 	switch string(tag) {
 	case "warning":
-		newMarkdown.Write([]byte("Warning:\n"))
+		io.WriteString(&newMarkdown, "Warning:\n")
 		newMarkdown.Write(body)
 	default:
-		newMarkdown.Write(fmt.Appendf(nil, "Tag %s does not exist\n", tag))
+		io.WriteString(&newMarkdown, fmt.Sprintf("Tag %s does not exist\n", tag))
 		newMarkdown.Write(body)
 	}
 
