@@ -49,7 +49,7 @@ func (r *RealRenderer) renderMultiline(md []byte, config *RenderConfig) ([]byte,
 	var newMarkdown bytes.Buffer
 	switch tag {
 	case "warning":
-		newMarkdown.Write([]byte("Warning !\n"))
+        newMarkdown.Write([]byte("Warning:\n"))
 		newMarkdown.Write(body)
 	}
 
