@@ -24,8 +24,8 @@ type GitSource struct {
 
 func NewGitSource(config *config.Config) Source {
 	return &GitSource{
-		dataPath:   config.DataPath,
-		repository: config.Repository,
+		dataPath:   config.Envs.DataPath,
+		repository: config.Envs.Repository,
 	}
 }
 

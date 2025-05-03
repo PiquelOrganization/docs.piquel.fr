@@ -38,7 +38,7 @@ func main() {
 
 	done := make(chan error)
 	go func() {
-		address := fmt.Sprintf("0.0.0.0:%s", config.Port)
+		address := fmt.Sprintf("0.0.0.0:%s", config.Envs.Port)
 		log.Printf("[Server] Starting server on %s\n", address)
 
 		err := http.ListenAndServe(address, router)

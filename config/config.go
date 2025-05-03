@@ -3,20 +3,31 @@ package config
 import (
 	"log"
 	"os"
+	"sync"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Domain                string
-	Host                  string
-	Port                  string
-	DataPath              string // where to clone the repository
-	Repository            string // the reposityory to get the pages from
-	WebhookSecret         string // the secret to use to validate the webhook
-	HomePage              string // the page to render at /
-	DefaultHighlightStyle string
+	sync.Mutex
+	Envs   Envs
+	Config DocsConfig
+}
+
+type Envs struct {
+	Domain        string
+	Host          string
+	Port          string
+	DataPath      string // where to clone the repository
+	Repository    string // the reposityory to get the pages from
+	WebhookSecret string // the secret to use to validate the webhook
+}
+
+type DocsConfig struct {
+	HomePage       string `json:"home_page"`       // the page to render at /
+	HighlightStyle string `json:"highlight_style"` // the style used to highlight code
+	Root           string `json:"root"`            // the root used to return
 }
 
 func LoadConfig() *Config {
@@ -25,14 +36,18 @@ func LoadConfig() *Config {
 	log.Printf("[Config] Loading environment variables...")
 
 	return &Config{
-		Domain:                getEnv("DOMAIN"),
-		Host:                  getEnv("HOST"),
-		Port:                  getDefaultEnv("PORT", "80"),
-		DataPath:              utils.FormatLocalPathString(getDefaultEnv("DATA_PATH", "/docs/data"), ""),
-		Repository:            getEnv("REPOSITORY"),
-		WebhookSecret:         getEnv("WEBHOOK_SECRET"),
-		HomePage:              utils.FormatLocalPathString(getDefaultEnv("HOME_PAGE", "index.md"), ".md"),
-		DefaultHighlightStyle: "tokyonight",
+		Envs: Envs{
+			Domain:        getEnv("DOMAIN"),
+			Host:          getEnv("HOST"),
+			Port:          getDefaultEnv("PORT", "80"),
+			DataPath:      utils.FormatLocalPathString(getDefaultEnv("DATA_PATH", "/docs/data"), ""),
+			Repository:    getEnv("REPOSITORY"),
+			WebhookSecret: getEnv("WEBHOOK_SECRET")},
+		Config: DocsConfig{
+			HomePage:       "index.md",
+			HighlightStyle: "tokyonight",
+			Root:           "",
+		},
 	}
 }
 

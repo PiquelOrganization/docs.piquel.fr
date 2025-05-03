@@ -21,7 +21,7 @@ type Handler struct {
 }
 
 func NewHandler(config *config.Config, source source.Source, renderer render.Renderer, staticHandler http.Handler) *Handler {
-	return &Handler{source, renderer, staticHandler, config.HomePage}
+	return &Handler{source, renderer, staticHandler, config.Config.HomePage}
 }
 
 func (h *Handler) GithubPushHandler(w http.ResponseWriter, r *http.Request) {
