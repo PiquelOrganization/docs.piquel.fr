@@ -47,7 +47,7 @@ func (r *RealRenderer) renderHook(config *RenderConfig) html.RenderNodeFunc {
 	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 		switch node := node.(type) {
 		case *ast.CodeBlock:
-			r.renderCodeBlock(w, node, entering)
+			r.renderCodeBlock(w, node, entering, config)
 			return ast.GoToNext, true
 		}
 		return ast.GoToNext, false

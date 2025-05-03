@@ -55,7 +55,7 @@ func (r *RealRenderer) renderMultiline(md []byte, config *RenderConfig) ([]byte,
 	var newMarkdown bytes.Buffer
 	switch string(tag) {
 	case "warning":
-        io.WriteString(&newMarkdown, "Warning:\n")
+		io.WriteString(&newMarkdown, "Warning:\n")
 		newMarkdown.Write(body)
 	default:
 		io.WriteString(&newMarkdown, fmt.Sprintf("Tag %s does not exist\n", tag))
