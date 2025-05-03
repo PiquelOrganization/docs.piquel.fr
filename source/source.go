@@ -42,6 +42,8 @@ func (s *GitSource) Update() error {
 		}
 	}
 
+	// TODO: update the configuration
+
 	return nil
 }
 

@@ -10,9 +10,8 @@ import (
 )
 
 type Config struct {
-	sync.Mutex
-	Envs   Envs
-	Config DocsConfig
+	Envs   Envs       // the technical server configuration
+	Config DocsConfig // the documentation specific configuration
 }
 
 type Envs struct {
@@ -25,6 +24,7 @@ type Envs struct {
 }
 
 type DocsConfig struct {
+	sync.Mutex
 	HomePage       string `json:"home_page"`       // the page to render at /
 	HighlightStyle string `json:"highlight_style"` // the style used to highlight code
 	Root           string `json:"root"`            // the root used to return
