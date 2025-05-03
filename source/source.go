@@ -109,7 +109,7 @@ func (s *GitSource) LoadInclude(path string) ([]byte, error) {
 		return []byte{}, fmt.Errorf("This entered file path \"%s\" is not valid !", path)
 	}
 
-	fileName := fmt.Sprintf("%s/.common/includes/%s.md", s.dataPath, strings.Trim(path, "/"))
+	fileName := fmt.Sprintf("%s/.common/includes%s.md", s.dataPath, utils.FormatLocalPathString(path, ".md"))
 
 	if _, err := os.Stat(fileName); err != nil {
 		return []byte{}, err

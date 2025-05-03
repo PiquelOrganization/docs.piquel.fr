@@ -1,51 +1,58 @@
 package render
 
-import (
-	"bytes"
-	"log"
-)
+import "bytes"
 
-func (r *RealRenderer) renderCustom(md []byte, config *RenderConfig) []byte {
-	md = r.renderSingleline(md, config)
-	md = r.renderMultiline(md, config)
-	return md
-}
-
-func (r *RealRenderer) renderSingleline(md []byte, config *RenderConfig) []byte {
-	match := r.singleline.FindSubmatch(md)
-	if match == nil {
-		return md
+func (r *RealRenderer) renderCustom(md []byte, config *RenderConfig) ([]byte, error) {
+	var err error
+	md, err = r.renderSingleline(md, config)
+	if err != nil {
+		return []byte{}, err
+	}
+	md, err = r.renderMultiline(md, config)
+	if err != nil {
+		return []byte{}, err
 	}
 
-	html := r.renderSingleHTML(match[1], match[2], config)
+	return md, nil
+}
 
-	md = bytes.Replace(md, match[0], html, 1)
+func (r *RealRenderer) renderSingleline(md []byte, config *RenderConfig) ([]byte, error) {
+	match := r.singleline.FindSubmatch(md)
+	if match == nil {
+		return md, nil
+	}
+
+	total, tag, param := match[0], string(match[1]), string(match[2])
+
+	var newMarkdown bytes.Buffer
+	switch tag {
+	case "include":
+		include, err := r.source.LoadInclude(param)
+		if err != nil {
+			return []byte{}, err
+		}
+		newMarkdown.Write(include)
+	}
+
+	md = bytes.Replace(md, total, newMarkdown.Bytes(), 1)
 	return r.renderSingleline(md, config)
 }
 
-func (r *RealRenderer) renderSingleHTML(tag, param []byte, config *RenderConfig) []byte {
-	log.Printf("\ntag: %s\nparam: %s\n", tag, param)
-	return []byte("Jesus Christ")
-}
-
-func (r *RealRenderer) renderMultiline(md []byte, config *RenderConfig) []byte {
+func (r *RealRenderer) renderMultiline(md []byte, config *RenderConfig) ([]byte, error) {
 	match := r.multiline.FindSubmatch(md)
 	if match == nil {
-		return md
+		return md, nil
 	}
 
-	var html []byte
-	if len(match) == 3 {
-		html = r.renderMultiHTML(match[1], nil, match[2], config)
-	} else if len(match) == 4 {
-		html = r.renderMultiHTML(match[1], match[2], match[3], config)
+	total, tag, body := match[0], string(match[1]), match[2]
+
+	var newMarkdown bytes.Buffer
+	switch tag {
+	case "warning":
+		newMarkdown.Write([]byte("Warning !\n"))
+		newMarkdown.Write(body)
 	}
 
-	md = bytes.Replace(md, match[0], html, 1)
+	md = bytes.Replace(md, total, newMarkdown.Bytes(), 1)
 	return r.renderMultiline(md, config)
-}
-
-func (r *RealRenderer) renderMultiHTML(tag, param, body []byte, config *RenderConfig) []byte {
-	log.Printf("\ntag: %s\nparam: %s\nbody: %s\n", tag, param, body)
-	return []byte("Jesus Christ")
 }

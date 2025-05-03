@@ -30,7 +30,7 @@ func NewRealRenderer(source source.Source) (Renderer, error) {
 		return nil, err
 	}
 
-	multiline, err := regexp.Compile(`(?m)^{ *([a-z]+)(?: *\"(.*)\")? *}\n?((?:.|\n)*?)\n?{/}$`)
+	multiline, err := regexp.Compile(`(?m)^{ *([a-z]+) *}\n?((?:.|\n)*?)\n?{/}$`)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,10 @@ func (r *RealRenderer) RenderFile(path string, config *RenderConfig) ([]byte, er
 		return []byte{}, err
 	}
 
-	custom := r.renderCustom(file, config)
+	custom, err := r.renderCustom(file, config)
+	if err != nil {
+		return []byte{}, err
+	}
 	doc := r.parseMarkdown(custom, config)
 	doc = r.fixupAST(doc, config)
 	html := r.renderHTML(doc, config)
