@@ -9,13 +9,14 @@ import (
 )
 
 type Config struct {
-	Domain        string
-	Host          string
-	Port          string
-	DataPath      string // where to clone the repository
-	Repository    string // the reposityory to get the pages from
-	WebhookSecret string // the secret to use to validate the webhook
-	HomePage      string // the page to render at /
+	Domain                string
+	Host                  string
+	Port                  string
+	DataPath              string // where to clone the repository
+	Repository            string // the reposityory to get the pages from
+	WebhookSecret         string // the secret to use to validate the webhook
+	HomePage              string // the page to render at /
+	DefaultHighlightStyle string
 }
 
 func LoadConfig() *Config {
@@ -24,13 +25,14 @@ func LoadConfig() *Config {
 	log.Printf("[Config] Loading environment variables...")
 
 	return &Config{
-		Domain:        getEnv("DOMAIN"),
-		Host:          getEnv("HOST"),
-		Port:          getDefaultEnv("PORT", "80"),
-		DataPath:      utils.FormatLocalPathString(getDefaultEnv("DATA_PATH", "/docs/data"), ""),
-		Repository:    getEnv("REPOSITORY"),
-		WebhookSecret: getEnv("WEBHOOK_SECRET"),
-		HomePage:      utils.FormatLocalPathString(getDefaultEnv("HOME_PAGE", "index.md"), ".md"),
+		Domain:                getEnv("DOMAIN"),
+		Host:                  getEnv("HOST"),
+		Port:                  getDefaultEnv("PORT", "80"),
+		DataPath:              utils.FormatLocalPathString(getDefaultEnv("DATA_PATH", "/docs/data"), ""),
+		Repository:            getEnv("REPOSITORY"),
+		WebhookSecret:         getEnv("WEBHOOK_SECRET"),
+		HomePage:              utils.FormatLocalPathString(getDefaultEnv("HOME_PAGE", "index.md"), ".md"),
+		DefaultHighlightStyle: "tokyonight",
 	}
 }
 
