@@ -16,6 +16,15 @@ func IsDir(path string) bool {
 	}
 }
 
+func ValidatePath(path string) bool {
+	if strings.Contains(path, "..") {
+		return false
+	} else if strings.Contains(path, "~") {
+		return false
+	}
+	return true
+}
+
 func FormatLocalPathString(path, ext string) string {
 	trim := strings.Trim(path, "/")
 	trim = strings.TrimSuffix(trim, ext)
