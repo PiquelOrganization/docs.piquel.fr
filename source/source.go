@@ -89,6 +89,11 @@ func (s *GitSource) readDir(path, ext string) ([]string, error) {
 }
 
 func (s *GitSource) LoadRouteFile(route string) ([]byte, error) {
+	isValidPath := utils.ValidatePath(route)
+	if !isValidPath {
+		return []byte{}, fmt.Errorf("This entered file path \"%s\" is not valid !", route)
+	}
+
 	fileName := fmt.Sprintf("%s%s.md", s.dataPath, route)
 
 	if _, err := os.Stat(fileName); err != nil {
@@ -99,6 +104,11 @@ func (s *GitSource) LoadRouteFile(route string) ([]byte, error) {
 }
 
 func (s *GitSource) LoadInclude(path string) ([]byte, error) {
+	isValidPath := utils.ValidatePath(path)
+	if !isValidPath {
+		return []byte{}, fmt.Errorf("This entered file path \"%s\" is not valid !", path)
+	}
+
 	fileName := fmt.Sprintf("%s/.common/includes/%s.md", s.dataPath, strings.Trim(path, "/"))
 
 	if _, err := os.Stat(fileName); err != nil {
