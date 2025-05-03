@@ -51,7 +51,7 @@ func (h *Handler) GithubPushHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path := utils.FormatLocalPathString(r.URL.Path, ".md")
 
-	if path == "gh-push" && r.Method == http.MethodPost {
+	if path == "/gh-push" && r.Method == http.MethodPost {
 		h.GithubPushHandler(w, r)
 		return
 	}
