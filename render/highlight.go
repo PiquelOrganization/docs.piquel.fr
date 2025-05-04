@@ -3,7 +3,9 @@ package render
 import (
 	"fmt"
 	"io"
+	"net/http"
 
+	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/lexers"
 	"github.com/alecthomas/chroma/v2/styles"
@@ -38,7 +40,7 @@ func (r *RealRenderer) getHighlightStyle(config *RenderConfig) error {
 
 	config.highlightStyle = styles.Get(styleName)
 	if config.highlightStyle == nil {
-		return fmt.Errorf("Couldn't find style %s", styleName)
+		return utils.NewError(fmt.Sprintf("Couldn't find the style %s", styleName), http.StatusBadRequest)
 	}
 
 	return nil
