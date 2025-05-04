@@ -25,10 +25,10 @@ type Envs struct {
 
 type DocsConfig struct {
 	sync.Mutex
-	HomePage       string `json,yaml:"home_page"`       // the page to render at /
-	HighlightStyle string `json,yaml:"highlight_style"` // the style used to highlight code
-	Root           string `json,yaml:"root"`            // the root used to return
-	UseTailwind    bool   `json,yaml:"use_tailwind"`    // wether to add classes to reverse tailwind config
+	HomePage       string `yaml:"home_page" json:"home_page"`             // the page to render at /
+	HighlightStyle string `yaml:"highlight_style" json:"highlight_style"` // the style used to highlight code
+	Root           string `yaml:"root" json:"root"`                       // the root used to return
+	UseTailwind    bool   `yaml:"use_tailwind" json:"use_tailwind"`       // wether to add classes to reverse tailwind config
 }
 
 func LoadConfig() *Config {
@@ -45,7 +45,7 @@ func LoadConfig() *Config {
 			Repository:    getEnv("REPOSITORY"),
 			WebhookSecret: getEnv("WEBHOOK_SECRET")},
 		Config: DocsConfig{
-			HomePage:       "index.md",
+			HomePage:       "index",
 			HighlightStyle: "tokyonight",
 			Root:           "",
 		},
