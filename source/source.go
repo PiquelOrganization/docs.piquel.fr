@@ -48,11 +48,14 @@ func (s *GitSource) Update() error {
 	}
 
 	configData, err := os.ReadFile(fmt.Sprintf("%s/config.yml", s.dataPath))
-	if err != nil {
+	if errors.Is(err, os.ErrNotExist) {
+		configData, err = os.ReadFile(fmt.Sprintf("%s/config.yaml", s.dataPath))
 		if errors.Is(err, os.ErrNotExist) {
 			log.Printf("[Source] Could not find configuration file in repository")
 			return nil
 		}
+	}
+	if err != nil {
 		return err
 	}
 
