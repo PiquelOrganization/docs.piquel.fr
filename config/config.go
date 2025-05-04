@@ -26,9 +26,10 @@ type Envs struct {
 type DocsConfig struct {
 	sync.Mutex
 	HomePage       string `yaml:"home_page" json:"home_page"`             // the page to render at /
-	HighlightStyle string `yaml:"highlight_style" json:"highlight_style"` // the style used to highlight code
-	Root           string `yaml:"root" json:"root"`                       // the root used to return
-	UseTailwind    bool   `yaml:"use_tailwind" json:"use_tailwind"`       // wether to add classes to reverse tailwind config
+	HighlightStyle string `yaml:"highlight_style" json:"highlight_style"` // The name of the style used to format code blocks
+	Root           string `yaml:"root" json:"root"`                       // this will be prepended to any local URLs in the markdown
+	UseTailwind    bool   `yaml:"use_tailwind" json:"tailwind"`           // wether to use tailwind classes and settings (notably restore the proper size of titles)
+	FullPage       bool   `yaml:"full_page" json:"full_page"`             // wether to render a full page (add <!DOCTYPE html> to the top of the page
 }
 
 func LoadConfig() *Config {
