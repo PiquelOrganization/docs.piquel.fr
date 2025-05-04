@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/PiquelOrganization/docs.piquel.fr/config"
 	"github.com/PiquelOrganization/docs.piquel.fr/source"
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/formatters/html"
@@ -15,10 +16,7 @@ type Renderer interface {
 }
 
 type RenderConfig struct {
-	RootPath    string // this will be prepended to any local URLs in the markdown
-	UseTailwind bool   // wether to use tailwind classes and settings (notably restore the proper size of titles)
-	FullPage    bool   // wether to render a full page (add <!DOCTYPE html> to the top of the page
-	StyleName   string // The name of the style used to format code blocks
+	config.DocsConfig
 
 	highlightStyle *chroma.Style // the style used to format code blocks
 }

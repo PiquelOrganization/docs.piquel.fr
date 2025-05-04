@@ -33,7 +33,7 @@ func (r *RealRenderer) renderCodeBlock(w io.Writer, codeBlock *ast.CodeBlock, en
 }
 
 func (r *RealRenderer) getHighlightStyle(config *RenderConfig) error {
-	styleName := config.StyleName
+	styleName := config.HighlightStyle
 	if styleName == "" {
 		styleName = "tokyonight"
 	}
