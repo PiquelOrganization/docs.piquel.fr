@@ -63,6 +63,10 @@ func (s *GitSource) Update() error {
 	if err = yaml.Unmarshal(configData, &s.docsConfig); err != nil {
 		return err
 	}
+
+	s.docsConfig.HomePage = utils.FormatLocalPathString(s.docsConfig.HomePage, ".md")
+	s.docsConfig.Root = utils.FormatLocalPathString(s.docsConfig.Root, ".md")
+
 	s.docsConfig.Unlock()
 
 	return nil

@@ -96,6 +96,8 @@ func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path st
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			panic(err)
 		}
+		jsonConfig.HomePage = utils.FormatLocalPathString(jsonConfig.HomePage, ".md")
+		jsonConfig.Root = utils.FormatLocalPathString(jsonConfig.Root, ".md")
 	}
 
 	repoConfig := h.docsConfig
