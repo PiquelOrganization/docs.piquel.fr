@@ -25,7 +25,7 @@ type Envs struct {
 
 type DocsConfig struct {
 	sync.Mutex
-	HomePage       string `yaml:"home_page" json:"home_page"`             // the page to render at /
+	HomePage       string `yaml:"home_page"`                              // the page to render at / (only used in docsConfig, not used in rendering process so dont send when requesting a page)
 	HighlightStyle string `yaml:"highlight_style" json:"highlight_style"` // The name of the style used to format code blocks
 	Root           string `yaml:"root" json:"root"`                       // this will be prepended to any local URLs in the markdown
 	UseTailwind    bool   `yaml:"tailwind" json:"tailwind"`               // wether to use tailwind classes and settings (notably restore the proper size of titles)

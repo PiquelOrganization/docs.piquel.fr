@@ -17,12 +17,11 @@ type Handler struct {
 	source        source.Source
 	renderer      render.Renderer
 	staticHandler http.Handler // the handler that will serve static files
-	homePage      string
 	docsConfig    *config.DocsConfig
 }
 
 func NewHandler(config *config.Config, source source.Source, renderer render.Renderer, staticHandler http.Handler) *Handler {
-	return &Handler{source, renderer, staticHandler, config.Config.HomePage, &config.Config}
+	return &Handler{source, renderer, staticHandler, &config.Config}
 }
 
 func (h *Handler) GithubPushHandler(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +71,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if path == "/" {
-		h.handleDocsPath(w, r, h.homePage)
+		h.handleDocsPath(w, r, h.docsConfig.HomePage)
 		return
 	}
 
@@ -96,7 +95,6 @@ func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path st
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			panic(err)
 		}
-		jsonConfig.HomePage = utils.FormatLocalPathString(jsonConfig.HomePage, ".md")
 		jsonConfig.Root = utils.FormatLocalPathString(jsonConfig.Root, ".md")
 	}
 
@@ -125,8 +123,6 @@ func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path st
 	} else {
 		renderConfig.HighlightStyle = queryConfig.HighlightStyle
 	}
-
-	renderConfig.HomePage = repoConfig.HomePage
 
 	html, err := h.renderer.RenderFile(path, renderConfig)
 	if err != nil {
