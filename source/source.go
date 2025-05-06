@@ -1,13 +1,16 @@
 package source
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/config"
 	"github.com/PiquelOrganization/docs.piquel.fr/git"
 	"github.com/PiquelOrganization/docs.piquel.fr/utils"
+	"gopkg.in/yaml.v3"
 )
 
 type Source interface {
@@ -20,12 +23,14 @@ type Source interface {
 
 type GitSource struct {
 	dataPath, repository string
+	docsConfig           *config.DocsConfig
 }
 
 func NewGitSource(config *config.Config) Source {
 	return &GitSource{
-		dataPath:   config.DataPath,
-		repository: config.Repository,
+		dataPath:   config.Envs.DataPath,
+		repository: config.Envs.Repository,
+		docsConfig: &config.Config,
 	}
 }
 
@@ -41,6 +46,28 @@ func (s *GitSource) Update() error {
 			return err
 		}
 	}
+
+	configData, err := os.ReadFile(fmt.Sprintf("%s/config.yml", s.dataPath))
+	if errors.Is(err, os.ErrNotExist) {
+		configData, err = os.ReadFile(fmt.Sprintf("%s/config.yaml", s.dataPath))
+		if errors.Is(err, os.ErrNotExist) {
+			log.Printf("[Source] Could not find configuration file in repository")
+			return nil
+		}
+	}
+	if err != nil {
+		return err
+	}
+
+	s.docsConfig.Lock()
+	if err = yaml.Unmarshal(configData, &s.docsConfig); err != nil {
+		return err
+	}
+
+	s.docsConfig.HomePage = utils.FormatLocalPathString(s.docsConfig.HomePage, ".md")
+	s.docsConfig.Root = utils.FormatLocalPathString(s.docsConfig.Root, ".md")
+
+	s.docsConfig.Unlock()
 
 	return nil
 }

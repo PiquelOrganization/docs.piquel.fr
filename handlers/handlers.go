@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"os"
@@ -13,15 +14,14 @@ import (
 )
 
 type Handler struct {
-	source   source.Source
-	renderer render.Renderer
-
+	source        source.Source
+	renderer      render.Renderer
 	staticHandler http.Handler // the handler that will serve static files
-	homePage      string
+	docsConfig    *config.DocsConfig
 }
 
 func NewHandler(config *config.Config, source source.Source, renderer render.Renderer, staticHandler http.Handler) *Handler {
-	return &Handler{source, renderer, staticHandler, config.HomePage}
+	return &Handler{source, renderer, staticHandler, &config.Config}
 }
 
 func (h *Handler) GithubPushHandler(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +71,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if path == "/" {
-		h.handleDocsPath(w, r, h.homePage)
+		h.handleDocsPath(w, r, h.docsConfig.HomePage)
 		return
 	}
 
@@ -79,14 +79,50 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleDocsPath(w http.ResponseWriter, r *http.Request, path string) {
-	renderConfig := &render.RenderConfig{}
-
+	queryConfig := &config.DocsConfig{}
 	root := r.URL.Query().Get("root")
 	if root != "" {
-		renderConfig.RootPath = utils.FormatLocalPathString(root, "")
+		queryConfig.Root = utils.FormatLocalPathString(root, "")
 	}
-	_, renderConfig.UseTailwind = r.URL.Query()["tailwind"]
-	renderConfig.StyleName = r.URL.Query().Get("styleName")
+	_, queryConfig.UseTailwind = r.URL.Query()["tailwind"]
+	queryConfig.HighlightStyle = r.URL.Query().Get("highlight_style")
+	_, queryConfig.FullPage = r.URL.Query()["full_page"]
+
+	jsonConfig := &config.DocsConfig{}
+	if r.Header.Get("Content-Type") == "application/json" {
+		err := json.NewDecoder(r.Body).Decode(&jsonConfig)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			panic(err)
+		}
+		jsonConfig.Root = utils.FormatLocalPathString(jsonConfig.Root, ".md")
+	}
+
+	repoConfig := h.docsConfig
+
+	renderConfig := &render.RenderConfig{}
+	renderConfig.FullPage = queryConfig.FullPage || jsonConfig.FullPage || repoConfig.FullPage
+	renderConfig.UseTailwind = queryConfig.UseTailwind || jsonConfig.UseTailwind || repoConfig.UseTailwind
+
+	if queryConfig.Root == "" {
+		if jsonConfig.Root == "" {
+			renderConfig.Root = repoConfig.Root
+		} else {
+			renderConfig.Root = jsonConfig.Root
+		}
+	} else {
+		renderConfig.Root = queryConfig.Root
+	}
+
+	if queryConfig.HighlightStyle == "" {
+		if jsonConfig.HighlightStyle == "" {
+			renderConfig.HighlightStyle = repoConfig.HighlightStyle
+		} else {
+			renderConfig.HighlightStyle = jsonConfig.HighlightStyle
+		}
+	} else {
+		renderConfig.HighlightStyle = queryConfig.HighlightStyle
+	}
 
 	html, err := h.renderer.RenderFile(path, renderConfig)
 	if err != nil {

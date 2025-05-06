@@ -3,20 +3,33 @@ package config
 import (
 	"log"
 	"os"
+	"sync"
 
 	"github.com/PiquelOrganization/docs.piquel.fr/utils"
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Domain                string
-	Host                  string
-	Port                  string
-	DataPath              string // where to clone the repository
-	Repository            string // the reposityory to get the pages from
-	WebhookSecret         string // the secret to use to validate the webhook
-	HomePage              string // the page to render at /
-	DefaultHighlightStyle string
+	Envs   Envs       // the technical server configuration
+	Config DocsConfig // the documentation specific configuration
+}
+
+type Envs struct {
+	Domain        string
+	Host          string
+	Port          string
+	DataPath      string // where to clone the repository
+	Repository    string // the reposityory to get the pages from
+	WebhookSecret string // the secret to use to validate the webhook
+}
+
+type DocsConfig struct {
+	sync.Mutex
+	HomePage       string `yaml:"home_page"`                              // the page to render at / (only used in docsConfig, not used in rendering process so dont send when requesting a page)
+	HighlightStyle string `yaml:"highlight_style" json:"highlight_style"` // The name of the style used to format code blocks
+	Root           string `yaml:"root" json:"root"`                       // this will be prepended to any local URLs in the markdown
+	UseTailwind    bool   `yaml:"tailwind" json:"tailwind"`               // wether to use tailwind classes and settings (notably restore the proper size of titles)
+	FullPage       bool   `yaml:"full_page" json:"full_page"`             // wether to render a full page (add <!DOCTYPE html> to the top of the page
 }
 
 func LoadConfig() *Config {
@@ -25,14 +38,18 @@ func LoadConfig() *Config {
 	log.Printf("[Config] Loading environment variables...")
 
 	return &Config{
-		Domain:                getEnv("DOMAIN"),
-		Host:                  getEnv("HOST"),
-		Port:                  getDefaultEnv("PORT", "80"),
-		DataPath:              utils.FormatLocalPathString(getDefaultEnv("DATA_PATH", "/docs/data"), ""),
-		Repository:            getEnv("REPOSITORY"),
-		WebhookSecret:         getEnv("WEBHOOK_SECRET"),
-		HomePage:              utils.FormatLocalPathString(getDefaultEnv("HOME_PAGE", "index.md"), ".md"),
-		DefaultHighlightStyle: "tokyonight",
+		Envs: Envs{
+			Domain:        getEnv("DOMAIN"),
+			Host:          getEnv("HOST"),
+			Port:          getDefaultEnv("PORT", "80"),
+			DataPath:      utils.FormatLocalPathString(getDefaultEnv("DATA_PATH", "/docs/data"), ""),
+			Repository:    getEnv("REPOSITORY"),
+			WebhookSecret: getEnv("WEBHOOK_SECRET")},
+		Config: DocsConfig{
+			HomePage:       "index",
+			HighlightStyle: "tokyonight",
+			Root:           "",
+		},
 	}
 }
 
