@@ -1,4 +1,4 @@
-FROM golang:1.24.2 AS builder
+FROM golang:1.24.4 AS builder
 
 WORKDIR /docs.piquel.fr
 
@@ -11,8 +11,6 @@ RUN go mod download
 
 # Copy everything else
 COPY . .
-
-RUN go mod tidy
 
 # Build the binary
 RUN CGO_ENABLED=0 go build -o ./bin/main ./main.go
