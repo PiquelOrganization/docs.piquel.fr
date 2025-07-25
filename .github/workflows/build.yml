@@ -39,7 +39,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/piquelorganization/docs.piquel.fr:latest
-            ghcr.io/piquelorganization/docs.piquel.fr:${{ github.sha }}
+            ghcr.io/piquel-fr/piquel-docs:latest
+            ghcr.io/piquel-fr/piquel-docs:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
