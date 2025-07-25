@@ -5,7 +5,7 @@ import (
 	"io"
 	"slices"
 
-	"github.com/PiquelOrganization/docs.piquel.fr/utils"
+	"github.com/piquel-fr/piquel-docs/utils"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"

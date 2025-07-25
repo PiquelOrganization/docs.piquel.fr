@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/PiquelOrganization/docs.piquel.fr/config"
-	"github.com/PiquelOrganization/docs.piquel.fr/source"
+	"github.com/piquel-fr/piquel-docs/config"
+	"github.com/piquel-fr/piquel-docs/source"
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/formatters/html"
 )

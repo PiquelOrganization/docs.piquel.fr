@@ -7,10 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/PiquelOrganization/docs.piquel.fr/config"
-	"github.com/PiquelOrganization/docs.piquel.fr/render"
-	"github.com/PiquelOrganization/docs.piquel.fr/source"
-	"github.com/PiquelOrganization/docs.piquel.fr/utils"
+	"github.com/piquel-fr/piquel-docs/config"
+	"github.com/piquel-fr/piquel-docs/render"
+	"github.com/piquel-fr/piquel-docs/source"
+	"github.com/piquel-fr/piquel-docs/utils"
 )
 
 type Handler struct {

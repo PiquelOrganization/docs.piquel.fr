@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/PiquelOrganization/docs.piquel.fr/config"
-	"github.com/PiquelOrganization/docs.piquel.fr/git"
-	"github.com/PiquelOrganization/docs.piquel.fr/utils"
+	"github.com/piquel-fr/piquel-docs/config"
+	"github.com/piquel-fr/piquel-docs/git"
+	"github.com/piquel-fr/piquel-docs/utils"
 	"gopkg.in/yaml.v3"
 )
 

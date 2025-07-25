@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/PiquelOrganization/docs.piquel.fr/config"
-	"github.com/PiquelOrganization/docs.piquel.fr/handlers"
-	"github.com/PiquelOrganization/docs.piquel.fr/middleware"
-	"github.com/PiquelOrganization/docs.piquel.fr/render"
-	"github.com/PiquelOrganization/docs.piquel.fr/source"
+	"github.com/piquel-fr/piquel-docs/config"
+	"github.com/piquel-fr/piquel-docs/handlers"
+	"github.com/piquel-fr/piquel-docs/middleware"
+	"github.com/piquel-fr/piquel-docs/render"
+	"github.com/piquel-fr/piquel-docs/source"
 	"github.com/gorilla/mux"
 )
 

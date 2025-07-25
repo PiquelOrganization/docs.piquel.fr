@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/PiquelOrganization/docs.piquel.fr/utils"
+	"github.com/piquel-fr/piquel-docs/utils"
 	"github.com/joho/godotenv"
 )
 

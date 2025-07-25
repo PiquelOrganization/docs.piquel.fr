@@ -1,4 +1,4 @@
-module github.com/PiquelOrganization/docs.piquel.fr
+module github.com/piquel-fr/piquel-docs
 
 go 1.24.4
 

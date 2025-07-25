@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/PiquelOrganization/docs.piquel.fr/utils"
+	"github.com/piquel-fr/piquel-docs/utils"
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/lexers"
 	"github.com/alecthomas/chroma/v2/styles"
